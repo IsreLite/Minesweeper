@@ -109,6 +109,12 @@ void MinesweeperBoard::debug_display() const {
 		std::cout << std::endl;
 	}
 }
+void MinesweeperBoard::placeMinesRandomly(int numMines) {
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::uniform_int_distribution<> widthDist(0, width - 1);
+	std::uniform_int_distribution<> heightDist(0, height - 1);
+	std::set<std::pair<int, int>> minePositions;
 
 void MinesweeperBoard::placeMinesRandomly(int numMines) {
 	std::random_device rd;
