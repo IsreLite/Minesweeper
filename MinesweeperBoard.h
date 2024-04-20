@@ -7,6 +7,7 @@
 #include <vector>
 
 enum class GameMode { EASY, NORMAL, HARD, DEBUG };
+enum GameState { RUNNING, FINISHED_WIN, FINISHED_LOSS };
 
 // Represents a single field on the Minesweeper board
 struct Field {
@@ -21,6 +22,7 @@ private:
 	int height;
 	std::vector<std::vector<std::shared_ptr<Field>>> board; // 2D vector of shared pointers to Field
 	GameMode gameMode;
+	GameState gameState;
 
 
 	bool isValidIndex(int row, int col) const {
@@ -32,11 +34,33 @@ public:
 	MinesweeperBoard();
 	MinesweeperBoard(int width, int height, GameMode mode);
 
+
+
+
 	~MinesweeperBoard();
+	// Setter functions
+
+	void setGameState(GameState);
 
 	// Getter functions
-	int getWidth() const { return width; }
-	int getHeight() const { return height; }
+
+	int getBoardWidth() const { return width; }
+	int getBoardHeight() const { return height; }
+	int countMines(int, int) const;
+
+	bool isRevealed(int, int) const;
+
+	bool hasFlag(int, int) const;
+
+	void revealField(int, int);
+
+	void toggleFlag(int, int);
+
+	GameState getGameState() const;
+
+	void testRevealFieldAndGetGameState();
+
+	char getFieldInfo(int, int) const;
 
 	// Utility functions
 	void debug_display() const;

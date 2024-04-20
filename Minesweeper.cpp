@@ -12,27 +12,93 @@ int main()
 	mine.debug_display();
 	std::cout << std::endl;
 
-	//Test the parametric constructor with different game modes
+	// Test the easy game mode
 	std::cout << "Testing easy game mode:\n";
 	MinesweeperBoard mineEasy(10, 10, GameMode::EASY);
 	mineEasy.debug_display();
 	std::cout << std::endl;
 
+	// Test the revealField() and getGameState() functions
+	std::cout << "Testing revealField() and getGameState():\n";
+	std::cout << std::endl;
+	std::cout << "Game state: " << (mineEasy.getGameState() == GameState::RUNNING ? "Running" : "Finished") << std::endl;
+
+	mineEasy.revealField(4, 7);
+	std::cout << "Game state: " << (mineEasy.getGameState() == GameState::RUNNING ? "Running" : "Finished") << std::endl;
+
+	mineEasy.revealField(0, 0);
+	std::cout << "Game state: " << (mineEasy.getGameState() == GameState::RUNNING ? "Running" : "Finished") << std::endl;
+	std::cout << std::endl;
+
+	// Test the normal game mode
 	std::cout << "Testing normal game mode:\n";
 	MinesweeperBoard mineNormal(10, 10, GameMode::NORMAL);
 	mineNormal.debug_display();
 	std::cout << std::endl;
 
+	// Test the revealField() and getGameState() functions
+	std::cout << "Testing revealField() and getGameState():\n";
+	std::cout << "Game state: " << (mineNormal.getGameState() == GameState::RUNNING ? "Running" : "Finished") << std::endl;
+	mineNormal.revealField(0, 0);
+	std::cout << "Game state: " << (mineNormal.getGameState() == GameState::RUNNING ? "Running" : "Finished") << std::endl;
+	std::cout << std::endl;
+
+	// Test the hard game mode
 	std::cout << "Testing hard game mode:\n";
 	MinesweeperBoard mineHard(10, 10, GameMode::HARD);
 	mineHard.debug_display();
 	std::cout << std::endl;
+
+	// Test the revealField() and getGameState() functions
+	std::cout << "Testing revealField() and getGameState():\n";
+	std::cout << "Game state: " << (mineHard.getGameState() == GameState::RUNNING ? "Running" : "Finished") << std::endl;
+	mineHard.revealField(0, 0);
+	std::cout << "Game state: " << (mineHard.getGameState() == GameState::RUNNING ? "Running" : "Finished") << std::endl;
+	std::cout << std::endl;
+
 
 	std::cout << "Testing debug game mode:\n";
 	MinesweeperBoard mineDebug(10, 10, GameMode::DEBUG);
 	mineDebug.debug_display();
 	std::cout << std::endl;
 
+	// Test the countMines() function
+	std::cout << "Testing countMines():\n";
+	std::cout << "Mines around (0, 0): " << mineDebug.countMines(0, 0) << std::endl;
+	std::cout << "Mines around (1, 0): " << mineDebug.countMines(1, 0) << std::endl;
+	std::cout << "Mines around (2, 9): " << mineDebug.countMines(2, 9) << std::endl;
+	std::cout << "Mines around (2, 1): " << mineDebug.countMines(2, 1) << std::endl;
+	std::cout << "Mines around (6, 7): " << mineDebug.countMines(6, 7) << std::endl;
+	std::cout << std::endl;
+
+	// Test the hasFlag() and toggleFlag() functions
+	std::cout << "Testing hasFlag() and toggleFlag():\n";
+	std::cout << "Has flag at (0, 2)? " << (mineDebug.hasFlag(0, 2) ? "Yes" : "No") << std::endl;
+	mineDebug.toggleFlag(0, 0);
+	std::cout << "Has flag at toggled (0, 0)? " << (mineDebug.hasFlag(0, 0) ? "Yes" : "No") << std::endl;
+	std::cout << std::endl;
+
+	// Test the revealField() and getGameState() functions
+	std::cout << "Testing revealField() and getGameState():\n";
+	std::cout << "Game state: ";
+	mineDebug.getGameState();
+	mineDebug.revealField(2, 1);
+	std::cout << "Game state: " << (mineDebug.getGameState()) << std::endl;
+	std::cout << "Game state: " << (mineDebug.getGameState() == GameState::RUNNING ? "Running" : "Finished") << std::endl;
+	std::cout << std::endl;
+
+
+
+	// Test the getFieldInfo() function
+	mineDebug.revealField(4, 9);
+	std::cout << "Testing getFieldInfo():\n";
+	std::cout << "Field info at (0, 0): " << mineDebug.getFieldInfo(0, 0) << std::endl;
+	std::cout << "Field info at (1, 1): " << mineDebug.getFieldInfo(1, 1) << std::endl;
+	std::cout << "Field info at (0, 2): " << mineDebug.getFieldInfo(0, 2) << std::endl;
+	std::cout << "Field info at (6, 7): " << mineDebug.getFieldInfo(20, 7) << std::endl;
+	std::cout << "Field info at (4, 9): " << mineDebug.getFieldInfo(4, 9) << std::endl;
+	std::cout << "Field info at (4, 9): " << mineDebug.getFieldInfo(7, 0) << std::endl;
+	std::cout << std::endl;
 	return 0;
 
 }
