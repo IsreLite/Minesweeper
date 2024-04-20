@@ -38,11 +38,20 @@ public:
 	int getWidth() const { return width; }
 	int getHeight() const { return height; }
 
-	// Accessor functions
+	// Utility functions
+	void debug_display() const;
 
+	// Define default specific fields
+	std::vector<std::tuple<int, int, bool, bool, bool>> defaultSpecificFields = {
+		{0, 0, true, false, false},
+		{1, 1, false, false, true},
+		{0, 2, true, true, false}
+	};
 
 private:
 	void initializeBoard();
-
+	void setSpecificFields();
+	void initializeAllFields();
+	void placeMinesRandomly(int numMines);
 
 };
