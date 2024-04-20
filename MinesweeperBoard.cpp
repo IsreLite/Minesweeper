@@ -6,122 +6,38 @@
 #include <iomanip>
 #include <iostream>
 #include <memory> // Include for shared_ptr
+#include <random>
 #include <stdexcept>
 #include <vector>
-#include <random>
 
-MinesweeperBoard::MinesweeperBoard() {
+MinesweeperBoard::MinesweeperBoard() : width(7), height(5), gameMode(GameMode::EASY) {
+	std::cout << "I am nonparametric constructor" << std::endl;
+	initializeBoard();
+}
 
-	//Debug
-	std::cout << "I am default constructor" << std::endl;
+MinesweeperBoard::MinesweeperBoard(int width, int height, GameMode gameMode) :
+	width(width), height(height), gameMode(gameMode) {
+	std::cout << "I am parametric constructor" << std::endl;
 
-	// Set the size of the board
-	width = 7;
-	height = 5;
+}
 
+void MinesweeperBoard::initializeBoard() {
 	// Initialize the board
-	board.resize(height, std::vector<Field>(width));
+	board.resize(height, std::vector<std::shared_ptr<Field>>(width));
 
-	// Set the initial values of the fields using lambda functions
+
+	// Lambda function to set a field
 	auto setField = [&](int row, int col, bool hasMine, bool hasFlag, bool isRevealed) {
-		board[row][col] = { hasMine, hasFlag, isRevealed };
+		board[row][col] = std::make_shared<Field>(hasMine, hasFlag, isRevealed);
 		};
 
 	// Set specific fields
 	setField(0, 0, true, false, false);
 	setField(1, 1, false, false, true);
 	setField(0, 2, true, true, false);
-
-};
-
-MinesweeperBoard::MinesweeperBoard(int width, int height, GameMode mode)
-	: width(width), height(height), gameMode(mode) {
-
-	// Initialize the board
-	board.resize(height, std::vector<Field>(width));
-
-	// Place mines on the board based on the game mode
-	placeMines();
 }
 
-
-MinesweeperBoard::~MinesweeperBoard() {
-	// Deallocate memory for the 2D array
-
-}
-
-
-bool MinesweeperBoard::isValidIndex(int row, int col) const {
-	return (row >= 0 && row < height) && (col >= 0 && col < width);
-}
-
-
-// Methods
-void MinesweeperBoard::debug_display() const {
-	// Display the column numbers
-	std::cout << "    ";
-	for (int col = 0; col < width; ++col) {
-		std::cout << std::setw(4) << col;
-	}
-	std::cout << std::endl;
-
-	// Display the board
-	for (int row = 0; row < height; ++row) {
-		//std::cout << std::setw(2) << row << " ";
-		for (int col = 0; col < width; ++col) {
-			std::cout << "[" << (board[row][col].hasMine ? "M" : ".") << (board[row][col].isRevealed ? "r" : ".") << (board[row][col].hasFlag ? "f" : ".") << "]";
-		}
-		std::cout << std::endl;
-	}
-}
-
-
-void MinesweeperBoard::placeMines() {
-	// Place mines based on the game mode
-	switch (gameMode) {
-	case GameMode::EASY:
-		placeRandomMines(0.1);
-		break;
-	case GameMode::NORMAL:
-		placeRandomMines(0.2);
-		break;
-	case GameMode::HARD:
-		placeRandomMines(0.3);
-		break;
-	case GameMode::DEBUG:
-		placeDebugMines();
-		break;
-	}
-}
-
-void MinesweeperBoard::placeRandomMines(double mineRatio) {
-	// Place mines randomly on the board
-	std::random_device rd;
-	std::mt19937 gen(rd());
-	std::uniform_real_distribution<> dis(0, 1);
-
-	int numMines = static_cast<int>(width * height * mineRatio);
-	for (int k = 0; k < numMines; ++k) {
-		int row, col;
-		do {
-			row = rand() % height;
-			col = rand() % width;
-		} while (board[row][col]->hasMine);
-		board[row][col]->hasMine = true;
-	}
-}
-
-void MinesweeperBoard::placeDebugMines() {
-	// Place mines in a specific pattern for debug mode
-	for (int row = 0; row < height; ++row) {
-		for (int col = 0; col < width; ++col) {
-			if (row == col || row == 0 || (col == 0 && row % 2 == 0)) {
-				board[row][col].hasMine = true;
-			}
-		}
-	}
-}
-
+MinesweeperBoard::~MinesweeperBoard() {};
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu
 // Debug program: F5 or Debug > Start Debugging menu
