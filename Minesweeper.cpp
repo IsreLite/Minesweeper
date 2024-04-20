@@ -6,8 +6,33 @@
 
 int main()
 {
-	std::cout << "Hello World!\n";
+	// Test the default constructor
+	std::cout << "Testing default constructor:\n";
 	MinesweeperBoard mine;
+	mine.debug_display();
+	std::cout << std::endl;
+
+	//Test the parametric constructor with different game modes
+	std::cout << "Testing easy game mode:\n";
+	MinesweeperBoard mineEasy(10, 10, GameMode::EASY);
+	mineEasy.debug_display();
+	std::cout << std::endl;
+
+	std::cout << "Testing normal game mode:\n";
+	MinesweeperBoard mineNormal(10, 10, GameMode::NORMAL);
+	mineNormal.debug_display();
+	std::cout << std::endl;
+
+	std::cout << "Testing hard game mode:\n";
+	MinesweeperBoard mineHard(10, 10, GameMode::HARD);
+	mineHard.debug_display();
+	std::cout << std::endl;
+
+	std::cout << "Testing debug game mode:\n";
+	MinesweeperBoard mineDebug(10, 10, GameMode::DEBUG);
+	mineDebug.debug_display();
+	std::cout << std::endl;
+
 	return 0;
 
 }
