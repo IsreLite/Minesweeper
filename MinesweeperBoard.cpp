@@ -29,9 +29,9 @@ MinesweeperBoard::MinesweeperBoard(int w, int h, GameMode mode) : width(w), heig
 			if (i % 2 == 0) {
 				board[i][0]->hasMine = true; // Every second field in first column
 			}
-
-			board[4][9]->isRevealed = true;
-			board[7][0]->isRevealed = true;
+			//Reveal some fields to match debuging test
+			//board[4][9]->isRevealed = true;
+			//board[7][0]->isRevealed = true;
 
 		}
 	}
@@ -40,7 +40,7 @@ MinesweeperBoard::MinesweeperBoard(int w, int h, GameMode mode) : width(w), heig
 		int numMines = 0;
 		switch (mode) {
 		case GameMode::EASY:
-			numMines = static_cast<int>(width * height * 0.1); // 10% of board area
+			numMines = static_cast<int>(std::ceil(width * height * 0.1)); // 10% of board area
 			break;
 		case GameMode::NORMAL:
 			numMines = static_cast<int>(width * height * 0.2); // 20% of board area
@@ -60,8 +60,9 @@ void MinesweeperBoard::initializeBoard() {
 	board.resize(height, std::vector<std::shared_ptr<Field>>(width));
 
 	// Lambda function to initialize a field
-	auto initializeField = [&](int row, int col, bool hasMine = false, bool hasFlag = false, bool isRevealed = false) {
-		board[row][col] = std::make_shared<Field>(hasMine, hasFlag, isRevealed);
+	auto initializeField = [&](
+		int row, int col, bool hasMine = false, bool hasFlag = false, bool isRevealed = false) {
+			board[row][col] = std::make_shared<Field>(hasMine, hasFlag, isRevealed);
 		};
 
 	// Initialize all fields with default values
@@ -70,16 +71,20 @@ void MinesweeperBoard::initializeBoard() {
 			initializeField(i, j);
 		}
 	}
+	//setSpecificFields();
+}
 
+void MinesweeperBoard::setSpecificFields() const {
 	// Set specific fields if provided
 	for (const auto& fieldData : defaultSpecificFields) {
 		int row, col;
 		bool hasMine, hasFlag, isRevealed;
 		std::tie(row, col, hasMine, hasFlag, isRevealed) = fieldData;
-		initializeField(row, col, hasMine, hasFlag, isRevealed);
+		board[row][col]->hasMine = hasMine;
+		board[row][col]->hasFlag = hasFlag;
+		board[row][col]->isRevealed = isRevealed;
 	}
 }
-
 
 void MinesweeperBoard::debug_display() const {
 	//Display the board in debug mode format
@@ -115,13 +120,13 @@ void MinesweeperBoard::debug_display() const {
 }
 void MinesweeperBoard::placeMinesRandomly(int numMines) {
 	std::random_device rd;
-	std::mt19937 gen(rd());
 	std::uniform_int_distribution<> widthDist(0, width - 1);
 	std::uniform_int_distribution<> heightDist(0, height - 1);
 	std::set<std::pair<int, int>> minePositions;
 
 	int minesPlaced = 0;
 	while (minesPlaced < numMines) {
+		std::mt19937 gen(rd()); // Seed the generator each time
 		int row = heightDist(gen);
 		int col = widthDist(gen);
 		if (minePositions.insert(std::make_pair(row, col)).second) {
@@ -129,6 +134,19 @@ void MinesweeperBoard::placeMinesRandomly(int numMines) {
 			minesPlaced++;
 		}
 	}
+}
+
+int MinesweeperBoard::getMineCount() const
+{
+	int mineCount = 0;
+	for (int i = 0; i < height; ++i) {
+		for (int j = 0; j < width; ++j) {
+			if (board[i][j]->hasMine) {
+				mineCount++;
+			}
+		}
+	}
+	return mineCount;
 }
 
 int MinesweeperBoard::countMines(int row, int col) const {
@@ -214,7 +232,10 @@ void MinesweeperBoard::revealField(int row, int col) {
 		board[row][col]->isRevealed = true;
 	}
 	else {
-		if (countMines(0, 0) == 0) {
+		// Check if this is the first move
+		bool isFirstMove = (row == 0 && col == 0) && !isRevealed(0, 0);
+
+		if (isFirstMove) {
 			// First move, move the mine to another location
 			int newRow, newCol;
 			do {
@@ -224,6 +245,8 @@ void MinesweeperBoard::revealField(int row, int col) {
 			board[newRow][newCol]->hasMine = true;
 			board[row][col]->hasMine = false;
 			board[row][col]->isRevealed = true;
+			std::cout << "A mine has been redirected to another position on first move" << std::endl;
+
 		}
 		else {
 			board[row][col]->isRevealed = true;
@@ -234,38 +257,62 @@ void MinesweeperBoard::revealField(int row, int col) {
 
 GameState MinesweeperBoard::getGameState() const {
 	bool hasRevealedMine = false;
-	int unrevealed = 0;
+	int unrevealedNonMines = 0;
+	int flaggedMines = 0;
 	int mines = 0;
+	int minecount = getMineCount();
+	std::vector<std::pair<int, int>> unrevealedNonMineIndices;
+
 
 	for (int i = 0; i < height; ++i) {
 		for (int j = 0; j < width; ++j) {
 			if (!board[i][j]->isRevealed) {
-				unrevealed++;
-				if (board[i][j]->hasMine) {
-					mines++;
+				if (!board[i][j]->hasMine) {
+					unrevealedNonMines++;
+					unrevealedNonMineIndices.push_back({ j, i });
+
 				}
 			}
-			else if (board[i][j]->isRevealed && board[i][j]->hasMine) {
+			else if (board[i][j]->hasMine) {
 				hasRevealedMine = true;
-				//std::cout << "At cell: " << i << " : " << j << std::endl;
+			}
+			else if (board[i][j]->hasFlag) {
+				flaggedMines++;
 			}
 		}
 	}
 
-	//std::cout << "Cells: " << (height * width) << std::endl;
-	//std::cout << "Unrevealed: " << unrevealed << std::endl;
-	//std::cout << "Mines: " << mines << std::endl << std::endl;
+	int remainingMines = mines - flaggedMines;
+	int remainingMineCount = minecount - flaggedMines;
 
 	if (hasRevealedMine) {
+		std::cout << "Game state: FINISHED_LOSS" << std::endl;
+		std::cout << "Remaining mines: " << remainingMineCount << std::endl;
 		return GameState::FINISHED_LOSS;
 	}
-	else if (unrevealed == mines) {
+	else if (unrevealedNonMines == 0 || (flaggedMines == minecount)) {
+		std::cout << "Game state: FINISHED_WIN" << std::endl;
+		std::cout << "Remaining mines: 0" << std::endl;
 		return GameState::FINISHED_WIN;
 	}
 	else {
+		std::cout << "Game state: RUNNING" << std::endl;
+		std::cout << "Remainingmines: " << remainingMines << std::endl;
+		std::cout << "Remainingmines: " << remainingMineCount << std::endl;
+		std::cout << "Remaining mines: " << minecount << std::endl;
+		std::cout << "Unrevealed mines: " << unrevealedNonMines << std::endl;
+		std::cout << "Unrevealed mines: ";
+
+		for (const auto& index : unrevealedNonMineIndices) {
+			std::cout << "(" << index.first << ", " << index.second << ") ";
+		}
+		std::cout << std::endl;
+		std::cout << "Flagged mines: " << flaggedMines << std::endl << std::endl;
+
 		return GameState::RUNNING;
 	}
 }
+
 
 void MinesweeperBoard::testRevealFieldAndGetGameState() {
 	std::cout << "Testing revealField() and getGameState():\n";
@@ -330,7 +377,7 @@ MinesweeperBoard::~MinesweeperBoard() {
 	}
 	board.clear();
 
-	std::cout << "Board has been destoryed\n";
+	std::cout << "Board has been destroyed\n";
 
 };
 

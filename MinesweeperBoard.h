@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Minesweeperboard.h"
+#include "MSBoardTextView.h"
 #include <array>
 #include <iostream>
 #include <memory> // Include for shared_ptr
@@ -34,6 +36,12 @@ public:
 	MinesweeperBoard();
 	MinesweeperBoard(int width, int height, GameMode mode);
 
+	// Define default specific fields
+	std::vector<std::tuple<int, int, bool, bool, bool>> defaultSpecificFields = {
+		{0, 0, true, false, false},
+		{1, 1, false, false, true},
+		{0, 2, true, true, false}
+	};
 
 
 
@@ -46,6 +54,8 @@ public:
 
 	int getBoardWidth() const { return width; }
 	int getBoardHeight() const { return height; }
+
+	int getMineCount() const;
 	int countMines(int, int) const;
 
 	bool isRevealed(int, int) const;
@@ -65,16 +75,10 @@ public:
 	// Utility functions
 	void debug_display() const;
 
-	// Define default specific fields
-	std::vector<std::tuple<int, int, bool, bool, bool>> defaultSpecificFields = {
-		{0, 0, true, false, false},
-		{1, 1, false, false, true},
-		{0, 2, true, true, false}
-	};
 
 private:
 	void initializeBoard();
-	void setSpecificFields();
+	void setSpecificFields() const;
 	void initializeAllFields();
 	void placeMinesRandomly(int numMines);
 
