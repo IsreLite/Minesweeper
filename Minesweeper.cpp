@@ -1,9 +1,11 @@
 // Minesweeper.cpp : This file contains the 'main' function. Program execution begins and ends there.
 //
-
+#include "Minesweeper3D.h"
 #include "Minesweeperboard.h"
 #include "MSTextController.h"
+#include "SplashScreen.h"
 #include <iostream>
+#include <SFML/Graphics.hpp>
 
 int main()
 {
@@ -101,15 +103,41 @@ int main()
 	//std::cout << "Field info at (4, 9): " << mineDebug.getFieldInfo(7, 0) << std::endl;
 	//std::cout << std::endl;
 
-	MinesweeperBoard board(20, 10, GameMode::NORMAL);
-	MSBoardTextView view(board);
-	//view.display();
-	//board.revealField(0, 5);
-	//view.display();
 
-	MSTextController ctrl(board, view);
-	ctrl.play();
-	return 0;
+
+
+	//MinesweeperBoard board(20, 10, GameMode::NORMAL);
+	//MSBoardTextView view(board);
+	////view.display();
+	////board.revealField(0, 5);
+	////view.display();
+
+	//MSTextController ctrl(board, view);
+	//ctrl.play();
+
+
+	//MinesweeperBoard board(20, 10, GameMode::NORMAL);
+	//MSBoardTextView view(board);
+	////view.display();
+	////board.revealField(0, 5);
+	////view.display();
+
+	//MSTextController ctrl(board, view);
+	//ctrl.play();
+
+
+	//Minesweeper3D game;
+	//game.run();
+
+
+	sf::ContextSettings settings;
+	settings.antialiasingLevel = 8;
+	sf::RenderWindow window(sf::VideoMode(800, 600), "Minesweeper Splash Screen", sf::Style::Default, settings);
+
+	SplashScreen splashScreen;
+	splashScreen.run(window);
+
+	return EXIT_SUCCESS;
 
 }
 
