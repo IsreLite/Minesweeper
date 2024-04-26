@@ -1,13 +1,25 @@
+image: gcc:latest
+
 stages:
   - build
   - test
-
 job_build:
   stage: build
   script:
     - echo "Building the project"
+    - mkdir build
+    - cd build
+    - cmake ..
+    - make
 
 job_test:
   stage: test
   script:
     - echo "Running tests"
+    - cd build
+    - ./tests
+
+deploy-job:
+  stage: deploy
+  script:
+    echo "This is Deploy stage"
