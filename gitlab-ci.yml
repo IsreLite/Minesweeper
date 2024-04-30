@@ -3,6 +3,7 @@ image: gcc:latest
 stages:
   - build
   - test
+  
 job_build:
   stage: build
   script:
@@ -11,6 +12,10 @@ job_build:
     - cd build
     - cmake ..
     - make
+ 
+  tags:
+    - docker
+  when: always
 
 job_test:
   stage: test
@@ -18,8 +23,16 @@ job_test:
     - echo "Running tests"
     - cd build
     - ./tests
+ 
+  tags:
+    - docker
+  when: always
 
 deploy-job:
   stage: deploy
   script:
     echo "This is Deploy stage"
+  
+  tags:
+    - docker
+  when: always
