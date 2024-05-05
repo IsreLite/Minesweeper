@@ -155,14 +155,14 @@ int MinesweeperBoard::countMines(int row, int col) const {
 	}
 
 
-	if (row < 0 || row >= height || col < 0 || col >= width) {
+	if (row < 0 || row >= this->height || col < 0 || col >= this->width) {
 		return -1;
 	}
 
 	int mineCount = 0;
 	for (int i = row - 1; i <= row + 1; ++i) {
 		for (int j = col - 1; j <= col + 1; ++j) {
-			if (i >= 0 && i < height && j >= 0 && j < width && board[i][j]->hasMine) {
+			if (i >= 0 && i < this->height && j >= 0 && j < this->width && board[i][j]->hasMine) {
 				mineCount++;
 			}
 		}

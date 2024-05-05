@@ -1,70 +1,67 @@
 #pragma once
+#include "MinesweeperBoard.h"
+#include "SplashScreen.h"
+#include <iostream>
 #include <SFML/Graphics.hpp>
+#include <SFML/System.hpp>
+#include<time.h>
 #include <vector>
 
-const int BOARD_SIZE = 10; // Assuming a square board
+const int BOARD_SIZE = 8; // Assuming a square board
 const float CELL_SIZE = 50.0f; // Size of each cell in pixels
 
 class Minesweeper3D
 {
 public:
-	Minesweeper3D() {
-		// Initialize the window
-		window.create(sf::VideoMode(800, 600), "Minesweeper 3D");
+	Minesweeper3D();
 
-		// Initialize the board
-		board.resize(BOARD_SIZE, std::vector<int>(BOARD_SIZE, 0)); // Assuming no mines initially
+	std::pair<float, float> getGridStartPosition()
+	{
+		// Get the size of the window
+		sf::Vector2u windowSize = app.getSize();
 
-		// Initialize 3D cell shapes
-		cellShape.setSize(sf::Vector2f(CELL_SIZE, CELL_SIZE));
-		cellShape.setFillColor(sf::Color::White);
-		cellShape.setOutlineThickness(1.0f);
-		cellShape.setOutlineColor(sf::Color::Black);
+		// Check if the window size has changed
+		if (windowSize != currentWindowSize)
+		{
+			// Window size has changed, recalculate the grid parameters
+			currentWindowSize = windowSize;
+
+			// Calculate the starting position of the grid
+			float gridWidth = BOARD_SIZE * CELL_SIZE;
+			float gridHeight = BOARD_SIZE * CELL_SIZE;
+			startX = (currentWindowSize.x - gridWidth) / 2;
+			startY = (currentWindowSize.y - gridHeight) / 2;
+
+		}
+
+		return std::make_pair(startX, startY);
 	}
 
 	void run() {
-		while (window.isOpen()) {
+		while (app.isOpen()) {
 			handleEvents();
-			update();
+			//update();
 			render();
 		}
 	}
 
 private:
-	sf::RenderWindow window;
+	sf::RenderWindow app;
 	std::vector<std::vector<int>> board; // Represents the state of the Minesweeper board
 	sf::RectangleShape cellShape; // Shape for each cell on the board
+	sf::Font font;
+	MinesweeperBoard minesweeperBoard = MinesweeperBoard(BOARD_SIZE, BOARD_SIZE, GameMode::NORMAL);
+	sf::Vector2u currentWindowSize;
+	float startX, startY;
+	sf::Event event;
 
-	void handleEvents() {
-		sf::Event event;
-		while (window.pollEvent(event)) {
-			if (event.type == sf::Event::Closed) {
-				window.close();
-			}
-		}
-	}
+	void handleEvents();
 
-	void update() {
-		// Update game state here if needed
-	}
+	void update();
 
-	void render() {
-		window.clear(sf::Color::Black);
+	void drawBoard();
 
-		// Draw the 3D board
-		for (int x = 0; x < BOARD_SIZE; ++x) {
-			for (int y = 0; y < BOARD_SIZE; ++y) {
-				float xPos = x * CELL_SIZE;
-				float yPos = y * CELL_SIZE;
-				float zPos = 0.0f; // Assuming all cells are on the same plane
+	void render();
 
-				cellShape.setPosition(xPos, yPos);
-				cellShape.move(0, zPos); // Adjust for the z position
-				window.draw(cellShape);
-			}
-		}
-
-		window.display();
-	}
 };
 

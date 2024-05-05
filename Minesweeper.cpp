@@ -6,17 +6,13 @@
 #include "SplashScreen.h"
 #include <iostream>
 #include <SFML/Graphics.hpp>
+#include <SFML/OpenGL.hpp>
+
+
 
 int main()
 {
-	//// Test the default constructor
-	//std::cout << "Testing default constructor:\n";
-	//MinesweeperBoard mine;
-	//mine.debug_display();
-	//std::cout << std::endl;
 
-	//// Test the easy game mode
-	//std::cout << "Testing easy game mode:\n";
 	//MinesweeperBoard mineEasy(10, 10, GameMode::EASY);
 	//mineEasy.debug_display();
 	//std::cout << std::endl;
@@ -126,18 +122,20 @@ int main()
 	//ctrl.play();
 
 
-	//Minesweeper3D game;
-	//game.run();
+	Minesweeper3D game;
+	game.run();
 
 
-	sf::ContextSettings settings;
-	settings.antialiasingLevel = 8;
-	sf::RenderWindow window(sf::VideoMode(800, 600), "Minesweeper Splash Screen", sf::Style::Default, settings);
+	//sf::ContextSettings settings;
+	//settings.antialiasingLevel = 8;
+	//sf::RenderWindow window(sf::VideoMode(800, 600), "Minesweeper Splash Screen", sf::Style::Default, settings);
 
-	SplashScreen splashScreen;
-	splashScreen.run(window);
+	//SplashScreen splashScreen;
+	//splashScreen.run(window);
 
-	return EXIT_SUCCESS;
+
+
+	//return EXIT_SUCCESS;
 
 }
 

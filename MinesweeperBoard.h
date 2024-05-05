@@ -25,7 +25,7 @@ private:
 	std::vector<std::vector<std::shared_ptr<Field>>> board; // 2D vector of shared pointers to Field
 	GameMode gameMode;
 	GameState gameState;
-
+	friend class Minesweeper3D;
 
 	bool isValidIndex(int row, int col) const {
 		return row >= 0 && row < height && col >= 0 && col < width;
@@ -36,6 +36,7 @@ public:
 	MinesweeperBoard();
 	MinesweeperBoard(int width, int height, GameMode mode);
 
+	int remainingMineCount;
 	// Define default specific fields
 	std::vector<std::tuple<int, int, bool, bool, bool>> defaultSpecificFields = {
 		{0, 0, true, false, false},

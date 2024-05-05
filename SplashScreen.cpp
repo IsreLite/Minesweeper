@@ -35,7 +35,7 @@ SplashScreen::SplashScreen() {
 
 void SplashScreen::run(sf::RenderWindow& window) {
 	// Display the logo
-	//displayLogo(window);
+	displayLogo(window);
 
 	// Display UI elements
 	displayUI(window);
@@ -235,10 +235,16 @@ void SplashScreen::displayMainMenu(sf::RenderWindow& window) {
 void SplashScreen::displayUI(sf::RenderWindow& window) {
 
 
-	// Load and display the image above the loading bar
-	loadAndDisplayAboveLoadingBarImage(window);
+	// Load and display the Minesweeper 3D image above the loading bar
+	this->loadAndDisplayAboveLoadingBarImage(window);
+
+	// Wait for a moment to show the Minesweeper 3D image
+	sf::sleep(sf::seconds(2));
+
+	// Clear the window before displaying the main menu
+	window.clear();
 
 	// Display the main menu
-	displayMainMenu(window);
+	this->displayMainMenu(window);
 
 }
