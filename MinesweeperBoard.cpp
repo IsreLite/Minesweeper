@@ -12,11 +12,12 @@
 #include <vector>
 
 MinesweeperBoard::MinesweeperBoard() : width(7), height(5), gameMode(GameMode::EASY) {
-	std::cout << "I am nonparametric constructor" << std::endl;
 	initializeBoard();
+	std::cout << "I am nonparametric constructor" << std::endl;
 }
 
 MinesweeperBoard::MinesweeperBoard(int w, int h, GameMode mode) : width(w), height(h), gameMode(mode) {
+	std::cout << "I am parametric constructor" << std::endl;
 	initializeBoard();
 	if (mode == GameMode::DEBUG) {
 		// Place mines as per DEBUG mode requirements
@@ -29,7 +30,7 @@ MinesweeperBoard::MinesweeperBoard(int w, int h, GameMode mode) : width(w), heig
 			if (i % 2 == 0) {
 				board[i][0]->hasMine = true; // Every second field in first column
 			}
-			//Reveal some fields to match debuging test
+			//Reveal some fields to match debugging test
 			//board[4][9]->isRevealed = true;
 			//board[7][0]->isRevealed = true;
 
@@ -212,6 +213,8 @@ void MinesweeperBoard::toggleFlag(int row, int col) {
 }
 
 void MinesweeperBoard::revealField(int row, int col) {
+	bool isFirstMove = !board[row][col]->isRevealed;
+
 	if (row < 0 || row >= height || col < 0 || col >= width) {
 		return;
 	}
@@ -231,9 +234,9 @@ void MinesweeperBoard::revealField(int row, int col) {
 	if (!board[row][col]->hasMine) {
 		board[row][col]->isRevealed = true;
 	}
-	else {
+	else if (board[row][col]->hasMine) {
 		// Check if this is the first move
-		bool isFirstMove = (row == 0 && col == 0) && !isRevealed(0, 0);
+		//bool isFirstMove = !board[row][col]->isRevealed;
 
 		if (isFirstMove) {
 			// First move, move the mine to another location
@@ -246,7 +249,7 @@ void MinesweeperBoard::revealField(int row, int col) {
 			board[row][col]->hasMine = false;
 			board[row][col]->isRevealed = true;
 			std::cout << "A mine has been redirected to another position on first move" << std::endl;
-
+			isFirstMove = false;
 		}
 		else {
 			board[row][col]->isRevealed = true;
@@ -297,8 +300,8 @@ GameState MinesweeperBoard::getGameState() const {
 	}
 	else {
 		std::cout << "Game state: RUNNING" << std::endl;
-		std::cout << "Remainingmines: " << remainingMines << std::endl;
-		std::cout << "Remainingmines: " << remainingMineCount << std::endl;
+		std::cout << "Remaining mines: " << remainingMines << std::endl;
+		std::cout << "Remaining mines: " << remainingMineCount << std::endl;
 		std::cout << "Remaining mines: " << minecount << std::endl;
 		std::cout << "Unrevealed mines: " << unrevealedNonMines << std::endl;
 		std::cout << "Unrevealed mines: ";

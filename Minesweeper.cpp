@@ -80,7 +80,7 @@ int main()
 	//// Test the revealField() and getGameState() functions
 	//std::cout <me state: ";
 	//mineDebug.getGameS< "Testing revealField() and getGameState():\n";
-	//std::cout << "Gatate();
+	//std::cout << "GameState();
 	//mineDebug.revealField(2, 1);
 	//std::cout << "Game state: " << (mineDebug.getGameState()) << std::endl;
 	//std::cout << "Game state: " << (mineDebug.getGameState() == GameState::RUNNING ? "Running" : "Finished") << std::endl;
@@ -122,7 +122,10 @@ int main()
 	//ctrl.play();
 
 
-	Minesweeper3D game;
+	//Minesweeper3D game;
+	// 
+	Minesweeper3D game(4, GameMode::NORMAL);
+
 	game.run();
 
 
