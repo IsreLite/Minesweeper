@@ -26,10 +26,11 @@ private:
 	GameMode gameMode;
 	GameState gameState;
 	friend class Minesweeper3D;
-
+	bool dontRedirect = false;
 	bool isValidIndex(int row, int col) const {
 		return row >= 0 && row < height && col >= 0 && col < width;
 	}
+
 
 public:
 	// Constructors

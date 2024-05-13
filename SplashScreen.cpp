@@ -6,6 +6,7 @@
 #include <SFML/Window.hpp>
 
 SplashScreen::SplashScreen() {
+
 	// Load resources and initialize variables here
 	if (!logoTexture.loadFromFile("src/img/logo.png")) {
 		std::cerr << "Failed to load logo.png" << std::endl;
@@ -35,8 +36,9 @@ SplashScreen::SplashScreen() {
 	aboveLoadingBarSprite.setScale(scaleFactor, scaleFactor);
 	aboveLoadingBarSprite.setPosition((windowSize.x - aboveLoadingBarSprite.getLocalBounds().width) / 2 + 20, (windowSize.y - aboveLoadingBarSprite.getLocalBounds().height) / 2);
 }
-void startGame(int boardSize, GameMode selectedGameMode) {
+void startGame(sf::RenderWindow& window, int boardSize, GameMode selectedGameMode) {
 	Minesweeper3D game(boardSize, selectedGameMode);
+	game.run();
 }
 void SplashScreen::run(sf::RenderWindow& window) {
 	// Display the logo
@@ -45,6 +47,7 @@ void SplashScreen::run(sf::RenderWindow& window) {
 	// Display UI elements
 	displayUI(window);
 }
+
 void SplashScreen::displayLogo(sf::RenderWindow& window) {
 	sf::Sprite logoSprite(logoTexture);
 	logoSprite.setPosition(static_cast<float>(window.getSize().x / 2 - logoTexture.getSize().x / 2),
@@ -340,7 +343,7 @@ void SplashScreen::displayMainMenu(sf::RenderWindow& window) {
 				}
 				else if (startText.getGlobalBounds().contains(mousePos)) {
 					// Start the game with the selected game mode
-					//startGame(boardSize, selectedGameMode);
+					//startGame(window, boardSize, selectedGameMode);
 
 					Minesweeper3D game(boardSize, selectedGameMode);
 					game.run();

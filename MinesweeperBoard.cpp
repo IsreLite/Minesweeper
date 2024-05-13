@@ -236,9 +236,9 @@ void MinesweeperBoard::revealField(int row, int col) {
 	}
 	else if (board[row][col]->hasMine) {
 		// Check if this is the first move
-		//bool isFirstMove = !board[row][col]->isRevealed;
+		isFirstMove = !board[row][col]->isRevealed;
 
-		if (isFirstMove) {
+		if (!dontRedirect) {
 			// First move, move the mine to another location
 			int newRow, newCol;
 			do {
@@ -249,7 +249,7 @@ void MinesweeperBoard::revealField(int row, int col) {
 			board[row][col]->hasMine = false;
 			board[row][col]->isRevealed = true;
 			std::cout << "A mine has been redirected to another position on first move" << std::endl;
-			isFirstMove = false;
+			dontRedirect = true;
 		}
 		else {
 			board[row][col]->isRevealed = true;

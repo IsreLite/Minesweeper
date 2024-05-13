@@ -123,7 +123,7 @@ int main()
 
 
 	//Minesweeper3D game;
-	// 
+	//// 
 	Minesweeper3D game(4, GameMode::NORMAL);
 
 	game.run();
@@ -132,13 +132,33 @@ int main()
 	//sf::ContextSettings settings;
 	//settings.antialiasingLevel = 8;
 	//sf::RenderWindow window(sf::VideoMode(800, 600), "Minesweeper Splash Screen", sf::Style::Default, settings);
-
+	//WindowManager windowManager(800, 600, "Minesweeper 3D");
+	//sf::RenderWindow& window = windowManager.getWindow();
 	//SplashScreen splashScreen;
-	//splashScreen.run(window);
+	//splashScreen.run();
+
+	///////////////////////////////////////////
+
+	// Create the SFML window
+	//sf::RenderWindow window(sf::VideoMode(800, 600), "Minesweeper 3D");
+	  // Create an instance of the WindowManager
+	//WindowManager windowManager(800, 600, "Minesweeper 3D");
+	//sf::RenderWindow& window = windowManager.getWindow();
+
+	// Call the function to create the window
+	/*windowManager.createWindow(800, 600, "My Window");*/
+
+	// Run the window
+	//window.run();
+
+	// Run the window manager
+	//windowManager.run();
+
+	// Create an instance of the WindowManager class and pass the window reference
+	//WindowManager windowManager(window);
 
 
-
-	//return EXIT_SUCCESS;
+	return EXIT_SUCCESS;
 
 }
 
