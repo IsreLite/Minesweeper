@@ -5,7 +5,9 @@
 #include <SFML/System.hpp>
 #include <SFML/Window.hpp>
 
-SplashScreen::SplashScreen() {
+SplashScreen::SplashScreen(std::shared_ptr<sf::RenderWindow> window) : window(window) {
+	//SplashScreen::SplashScreen(WindowManager& windowManager) {
+	this->window = window;
 
 	// Load resources and initialize variables here
 	if (!logoTexture.loadFromFile("src/img/logo.png")) {
@@ -36,28 +38,28 @@ SplashScreen::SplashScreen() {
 	aboveLoadingBarSprite.setScale(scaleFactor, scaleFactor);
 	aboveLoadingBarSprite.setPosition((windowSize.x - aboveLoadingBarSprite.getLocalBounds().width) / 2 + 20, (windowSize.y - aboveLoadingBarSprite.getLocalBounds().height) / 2);
 }
-void startGame(sf::RenderWindow& window, int boardSize, GameMode selectedGameMode) {
-	Minesweeper3D game(boardSize, selectedGameMode);
+void startGame(std::shared_ptr<sf::RenderWindow> window, int boardSize, GameMode selectedGameMode) {
+	Minesweeper3D game(window, boardSize, selectedGameMode);
 	game.run();
 }
-void SplashScreen::run(sf::RenderWindow& window) {
+void SplashScreen::run() {
 	// Display the logo
 	//displayLogo(window);
 
 	// Display UI elements
-	displayUI(window);
+	displayUI();
 }
 
-void SplashScreen::displayLogo(sf::RenderWindow& window) {
+void SplashScreen::displayLogo() {
 	sf::Sprite logoSprite(logoTexture);
-	logoSprite.setPosition(static_cast<float>(window.getSize().x / 2 - logoTexture.getSize().x / 2),
-		static_cast<float>(window.getSize().y / 2 - logoTexture.getSize().y / 2));
-	window.draw(logoSprite);
-	window.display();
+	logoSprite.setPosition(static_cast<float>(window->getSize().x / 2 - logoTexture.getSize().x / 2),
+		static_cast<float>(window->getSize().y / 2 - logoTexture.getSize().y / 2));
+	window->draw(logoSprite);
+	window->display();
 	sf::sleep(sf::seconds(2)); // Wait for 2 seconds (adjust as needed)
 }
 
-sf::Sprite SplashScreen::loadAboveLoadingBarImage(sf::RenderWindow& window) {
+sf::Sprite SplashScreen::loadAboveLoadingBarImage() {
 	// Load the image to display above the loading bar
 	sf::Texture aboveLoadingBarTexture;
 	if (!aboveLoadingBarTexture.loadFromFile("src/img/minesweeper_image.jpeg")) {
@@ -72,7 +74,7 @@ sf::Sprite SplashScreen::loadAboveLoadingBarImage(sf::RenderWindow& window) {
 	sf::Sprite aboveLoadingBarSprite(aboveLoadingBarTexture);
 
 	// Get the size of the window
-	sf::Vector2u windowSize = window.getSize();
+	sf::Vector2u windowSize = window->getSize();
 
 	// Get the size of the loaded image
 	sf::Vector2u imageSize = aboveLoadingBarTexture.getSize();
@@ -91,7 +93,7 @@ sf::Sprite SplashScreen::loadAboveLoadingBarImage(sf::RenderWindow& window) {
 	return aboveLoadingBarSprite;
 }
 
-void SplashScreen::loadAndDisplayAboveLoadingBarImage(sf::RenderWindow& window) {
+void SplashScreen::loadAndDisplayAboveLoadingBarImage() {
 	// Load the image to display above the loading bar
 	sf::Texture aboveLoadingBarTexture;
 	if (!aboveLoadingBarTexture.loadFromFile("src/img/minesweeper_image.jpeg")) {
@@ -106,7 +108,7 @@ void SplashScreen::loadAndDisplayAboveLoadingBarImage(sf::RenderWindow& window) 
 	sf::Sprite aboveLoadingBarSprite(aboveLoadingBarTexture);
 
 	// Get the size of the window
-	sf::Vector2u windowSize = window.getSize();
+	sf::Vector2u windowSize = window->getSize();
 
 	// Get the size of the loaded image
 	sf::Vector2u imageSize = aboveLoadingBarTexture.getSize();
@@ -125,8 +127,8 @@ void SplashScreen::loadAndDisplayAboveLoadingBarImage(sf::RenderWindow& window) 
 	// Define loading bar properties
 	sf::RectangleShape loadingBar(sf::Vector2f(400, 30));
 	// Position the loading bar below the loading text
-	loadingBar.setPosition(static_cast<float>(window.getSize().x / 2 - loadingBar.getSize().x / 2),
-		static_cast<float>(window.getSize().y / 2 + logoTexture.getSize().y / 2 + 60));
+	loadingBar.setPosition(static_cast<float>(window->getSize().x / 2 - loadingBar.getSize().x / 2),
+		static_cast<float>(window->getSize().y / 2 + logoTexture.getSize().y / 2 + 60));
 	float cornerRadius = 35.0f;
 	loadingBar.setOutlineThickness(2);
 	loadingBar.setOutlineColor(sf::Color::Black);
@@ -150,29 +152,29 @@ void SplashScreen::loadAndDisplayAboveLoadingBarImage(sf::RenderWindow& window) 
 	loadingText.setFillColor(sf::Color::White);
 	loadingText.setOutlineColor(sf::Color::Black);
 	loadingText.setOutlineThickness(2);
-	loadingText.setPosition(static_cast<float>(window.getSize().x / 2 - loadingText.getGlobalBounds().width / 2),
-		static_cast<float>(window.getSize().y / 2 + logoTexture.getSize().y / 2 + 20)); // Position the loading text below the logo
+	loadingText.setPosition(static_cast<float>(window->getSize().x / 2 - loadingText.getGlobalBounds().width / 2),
+		static_cast<float>(window->getSize().y / 2 + logoTexture.getSize().y / 2 + 20)); // Position the loading text below the logo
 
 	// Define game text properties
 	sf::Text gameText("Minesweeper 3D", font, 70);
 	gameText.setFillColor(sf::Color::White);
 	gameText.setOutlineColor(sf::Color::Black);
 	gameText.setOutlineThickness(2);
-	gameText.setPosition(static_cast<float>(window.getSize().x / 2 - gameText.getGlobalBounds().width / 2),
-		static_cast<float>(window.getSize().y / 2 + logoTexture.getSize().y / 2 - 350)); // Position the game text below the logo
+	gameText.setPosition(static_cast<float>(window->getSize().x / 2 - gameText.getGlobalBounds().width / 2),
+		static_cast<float>(window->getSize().y / 2 + logoTexture.getSize().y / 2 - 350)); // Position the game text below the logo
 
 
 	// Display the sprite, loading bar, and loading text together
 	while (clock.getElapsedTime().asSeconds() < animationDuration) {
 		// Clear the window
-		window.clear();
+		window->clear();
 
 		// Update the loading progress
 		elapsedTime = clock.getElapsedTime().asSeconds();
 		loadingProgress = elapsedTime / animationDuration;
 
 		// Draw the sprite, loading bar, and loading text
-		window.draw(aboveLoadingBarSprite);
+		window->draw(aboveLoadingBarSprite);
 
 		loadingBar.setSize(sf::Vector2f(400 * loadingProgress, 30));
 
@@ -181,19 +183,19 @@ void SplashScreen::loadAndDisplayAboveLoadingBarImage(sf::RenderWindow& window) 
 		gradient[2].position = loadingBar.getPosition() + loadingBar.getSize();
 		gradient[3].position = sf::Vector2f(loadingBar.getPosition().x, loadingBar.getPosition().y + loadingBar.getSize().y);
 
-		window.draw(gradient);
-		window.draw(loadingBar);
-		window.draw(gameText);
-		window.draw(loadingText);
+		window->draw(gradient);
+		window->draw(loadingBar);
+		window->draw(gameText);
+		window->draw(loadingText);
 
 		// Display the window
-		window.display();
+		window->display();
 	}
 
 	// Wait for a few seconds before closing
 	sf::sleep(sf::seconds(2));
 }
-void SplashScreen::displayMainMenu(sf::RenderWindow& window) {
+void SplashScreen::displayMainMenu() {
 	bool exitClicked = false;
 
 	// Define UI elements
@@ -201,83 +203,83 @@ void SplashScreen::displayMainMenu(sf::RenderWindow& window) {
 	exitText.setFillColor(sf::Color::White);
 	exitText.setOutlineColor(sf::Color::Black);
 	exitText.setOutlineThickness(2);
-	exitText.setPosition(static_cast<float>(window.getSize().x / 2 - exitText.getGlobalBounds().width / 2),
-		static_cast<float>(window.getSize().y / 2 + 50)); // Adjust position as needed
+	exitText.setPosition(static_cast<float>(window->getSize().x / 2 - exitText.getGlobalBounds().width / 2),
+		static_cast<float>(window->getSize().y / 2 + 50)); // Adjust position as needed
 
 	sf::Text startText("Start Game", font, 30);
 	startText.setFillColor(sf::Color::White);
 	startText.setOutlineColor(sf::Color::Black);
 	startText.setOutlineThickness(2);
-	startText.setPosition(static_cast<float>(window.getSize().x / 2 - startText.getGlobalBounds().width / 2),
-		static_cast<float>(window.getSize().y / 2 - 150)); // Adjust position as needed
+	startText.setPosition(static_cast<float>(window->getSize().x / 2 - startText.getGlobalBounds().width / 2),
+		static_cast<float>(window->getSize().y / 2 - 150)); // Adjust position as needed
 
 	sf::Text levelchange("Difficulty Level", font, 30);
 	levelchange.setFillColor(sf::Color::White);
 	levelchange.setOutlineColor(sf::Color::Black);
 	levelchange.setOutlineThickness(2);
-	levelchange.setPosition(static_cast<float>(window.getSize().x / 2 - levelchange.getGlobalBounds().width / 2),
-		static_cast<float>(window.getSize().y / 2 - 100)); // Adjust position as needed
+	levelchange.setPosition(static_cast<float>(window->getSize().x / 2 - levelchange.getGlobalBounds().width / 2),
+		static_cast<float>(window->getSize().y / 2 - 100)); // Adjust position as needed
 
 	// Define UI elements
 	sf::Text difficultyText("Easy", font, 30);
 	difficultyText.setFillColor(sf::Color::White);
 	difficultyText.setOutlineColor(sf::Color::Black);
 	difficultyText.setOutlineThickness(2);
-	difficultyText.setPosition(static_cast<float>(window.getSize().x / 2 - difficultyText.getGlobalBounds().width / 2),
-		static_cast<float>(window.getSize().y / 2 - 50)); // Adjust position as needed
+	difficultyText.setPosition(static_cast<float>(window->getSize().x / 2 - difficultyText.getGlobalBounds().width / 2),
+		static_cast<float>(window->getSize().y / 2 - 50)); // Adjust position as needed
 
 
 	sf::Text leftArrowText("<", font, 30);
 	leftArrowText.setFillColor(sf::Color::White);
 	leftArrowText.setOutlineColor(sf::Color::Black);
 	leftArrowText.setOutlineThickness(2);
-	leftArrowText.setPosition(static_cast<float>(window.getSize().x / 2 - startText.getGlobalBounds().width / 2 - 50),
-		static_cast<float>(window.getSize().y / 2 - 50)); // Adjust position as needed
+	leftArrowText.setPosition(static_cast<float>(window->getSize().x / 2 - startText.getGlobalBounds().width / 2 - 50),
+		static_cast<float>(window->getSize().y / 2 - 50)); // Adjust position as needed
 
 	sf::Text rightArrowText(">", font, 30);
 	rightArrowText.setFillColor(sf::Color::White);
 	rightArrowText.setOutlineColor(sf::Color::Black);
 	rightArrowText.setOutlineThickness(2);
-	rightArrowText.setPosition(static_cast<float>(window.getSize().x / 2 + startText.getGlobalBounds().width / 2 + 10),
-		static_cast<float>(window.getSize().y / 2 - 50)); // Adjust position as needed
+	rightArrowText.setPosition(static_cast<float>(window->getSize().x / 2 + startText.getGlobalBounds().width / 2 + 10),
+		static_cast<float>(window->getSize().y / 2 - 50)); // Adjust position as needed
 
 	sf::Text boardSizeText("Board Size: " + std::to_string(boardSize), font, 30);
 	boardSizeText.setFillColor(sf::Color::White);
 	boardSizeText.setOutlineColor(sf::Color::Black);
 	boardSizeText.setOutlineThickness(2);
-	boardSizeText.setPosition(static_cast<float>(window.getSize().x / 2 - boardSizeText.getGlobalBounds().width / 2),
-		static_cast<float>(window.getSize().y / 2)); // Adjust position as needed
+	boardSizeText.setPosition(static_cast<float>(window->getSize().x / 2 - boardSizeText.getGlobalBounds().width / 2),
+		static_cast<float>(window->getSize().y / 2)); // Adjust position as needed
 
 	sf::Text leftBoardSizeArrowText("<", font, 30);
 	leftBoardSizeArrowText.setFillColor(sf::Color::White);
 	leftBoardSizeArrowText.setOutlineColor(sf::Color::Black);
 	leftBoardSizeArrowText.setOutlineThickness(2);
-	leftBoardSizeArrowText.setPosition(static_cast<float>(window.getSize().x / 2 - boardSizeText.getGlobalBounds().width / 2 - 50),
-		static_cast<float>(window.getSize().y / 2)); // Adjust position as needed
+	leftBoardSizeArrowText.setPosition(static_cast<float>(window->getSize().x / 2 - boardSizeText.getGlobalBounds().width / 2 - 50),
+		static_cast<float>(window->getSize().y / 2)); // Adjust position as needed
 
 	sf::Text rightBoardSizeArrowText(">", font, 30);
 	rightBoardSizeArrowText.setFillColor(sf::Color::White);
 	rightBoardSizeArrowText.setOutlineColor(sf::Color::Black);
 	rightBoardSizeArrowText.setOutlineThickness(2);
-	rightBoardSizeArrowText.setPosition(static_cast<float>(window.getSize().x / 2 + boardSizeText.getGlobalBounds().width / 2 + 10),
-		static_cast<float>(window.getSize().y / 2)); // Adjust position as needed
+	rightBoardSizeArrowText.setPosition(static_cast<float>(window->getSize().x / 2 + boardSizeText.getGlobalBounds().width / 2 + 10),
+		static_cast<float>(window->getSize().y / 2)); // Adjust position as needed
 
 	GameMode selectedGameMode = GameMode::EASY;
 
 	std::string selectedDifficulty = "Easy";
 
-	while (window.isOpen() && !exitClicked) {
+	while (window->isOpen() && !exitClicked) {
 		sf::Event event;
-		while (window.pollEvent(event)) {
+		while (window->pollEvent(event)) {
 			if (event.type == sf::Event::Closed) {
-				window.close();
+				window->close();
 				return; // Exit the method if the window is closed
 			}
 			else if (event.type == sf::Event::MouseButtonPressed) {
 				// Check if the mouse click is within the bounds of the "Exit" text
-				sf::Vector2f mousePos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
+				sf::Vector2f mousePos = window->mapPixelToCoords(sf::Mouse::getPosition(*window));
 				if (exitText.getGlobalBounds().contains(mousePos)) {
-					window.close(); // Close the window if "Exit" is clicked
+					window->close(); // Close the window if "Exit" is clicked
 					exitClicked = true; // Set the flag to exit the loop
 				}
 
@@ -289,7 +291,7 @@ void SplashScreen::displayMainMenu(sf::RenderWindow& window) {
 					case GameMode::EASY:
 						selectedGameMode = GameMode::DEBUG;
 						selectedDifficulty = "Debug";
-						window.draw(difficultyText);
+						window->draw(difficultyText);
 						break;
 					case GameMode::NORMAL:
 						selectedGameMode = GameMode::EASY;
@@ -305,8 +307,8 @@ void SplashScreen::displayMainMenu(sf::RenderWindow& window) {
 						break;
 					}
 					difficultyText.setString(selectedDifficulty);
-					difficultyText.setPosition(static_cast<float>(window.getSize().x / 2 - difficultyText.getGlobalBounds().width / 2),
-						static_cast<float>(window.getSize().y / 2 - 50)); // Adjust position as needed
+					difficultyText.setPosition(static_cast<float>(window->getSize().x / 2 - difficultyText.getGlobalBounds().width / 2),
+						static_cast<float>(window->getSize().y / 2 - 50)); // Adjust position as needed
 
 				}
 				else if (rightArrowText.getGlobalBounds().contains(mousePos)) {
@@ -330,8 +332,8 @@ void SplashScreen::displayMainMenu(sf::RenderWindow& window) {
 						break;
 					}
 					difficultyText.setString(selectedDifficulty);
-					difficultyText.setPosition(static_cast<float>(window.getSize().x / 2 - difficultyText.getGlobalBounds().width / 2),
-						static_cast<float>(window.getSize().y / 2 - 50)); // Adjust position as needed
+					difficultyText.setPosition(static_cast<float>(window->getSize().x / 2 - difficultyText.getGlobalBounds().width / 2),
+						static_cast<float>(window->getSize().y / 2 - 50)); // Adjust position as needed
 
 
 				}
@@ -343,30 +345,30 @@ void SplashScreen::displayMainMenu(sf::RenderWindow& window) {
 				}
 				else if (startText.getGlobalBounds().contains(mousePos)) {
 					// Start the game with the selected game mode
-					//startGame(window, boardSize, selectedGameMode);
+					startGame(window, boardSize, selectedGameMode);
 
-					Minesweeper3D game(boardSize, selectedGameMode);
-					game.run();
+					//Minesweeper3D game(boardSize, selectedGameMode);
+					//game.run();
 				}
 				boardSizeText.setString("Board Size: " + std::to_string(boardSize));
-				boardSizeText.setPosition(static_cast<float>(window.getSize().x / 2 - boardSizeText.getGlobalBounds().width / 2),
-					static_cast<float>(window.getSize().y / 2)); // Adjust position as needed
+				boardSizeText.setPosition(static_cast<float>(window->getSize().x / 2 - boardSizeText.getGlobalBounds().width / 2),
+					static_cast<float>(window->getSize().y / 2)); // Adjust position as needed
 			}
 
 		}
 
 		// Draw UI elements
-		window.clear();
-		window.draw(levelchange);
-		window.draw(exitText);
-		window.draw(difficultyText);
-		window.draw(startText);
-		window.draw(leftArrowText);
-		window.draw(rightArrowText);
-		window.draw(boardSizeText);
-		window.draw(leftBoardSizeArrowText);
-		window.draw(rightBoardSizeArrowText);
-		window.display();
+		window->clear();
+		window->draw(levelchange);
+		window->draw(exitText);
+		window->draw(difficultyText);
+		window->draw(startText);
+		window->draw(leftArrowText);
+		window->draw(rightArrowText);
+		window->draw(boardSizeText);
+		window->draw(leftBoardSizeArrowText);
+		window->draw(rightBoardSizeArrowText);
+		window->display();
 	}
 }
 
@@ -374,7 +376,8 @@ void SplashScreen::displayMainMenu(sf::RenderWindow& window) {
 
 
 
-void SplashScreen::displayUI(sf::RenderWindow& window) {
+//void SplashScreen::displayUI(sf::RenderWindow& window) {
+void SplashScreen::displayUI() {
 
 
 	//// Load and display the Minesweeper 3D image above the loading bar
@@ -384,9 +387,9 @@ void SplashScreen::displayUI(sf::RenderWindow& window) {
 	//sf::sleep(sf::seconds(2));
 
 	// Clear the window before displaying the main menu
-	window.clear();
-
+	window->clear();
+	//window.reset();
 	// Display the main menu
-	this->displayMainMenu(window);
+	displayMainMenu();
 
 }

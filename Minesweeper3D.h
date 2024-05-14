@@ -19,13 +19,13 @@ public:
 	Minesweeper3D();
 
 	// Constructor with parameters
-	Minesweeper3D(int BOARD_SIZE, GameMode gameMode);
+	Minesweeper3D(std::shared_ptr<sf::RenderWindow> app, int BOARD_SIZE, GameMode gameMode);
 
 
 	std::pair<float, float> getGridStartPosition()
 	{
 		// Get the size of the window
-		sf::Vector2u windowSize = app.getSize();
+		sf::Vector2u windowSize = app->getSize();
 
 		// Check if the window size has changed
 		if (windowSize != currentWindowSize)
@@ -45,7 +45,7 @@ public:
 	}
 
 	void run() {
-		while (app.isOpen()) {
+		while (app->isOpen()) {
 			handleEvents();
 			//update();
 			render();
@@ -57,7 +57,7 @@ private:
 	MinesweeperBoard minesweeperBoard;
 	GameMode gameMode;
 	int BOARD_SIZE; // Assuming a square board
-	sf::RenderWindow app;
+	std::shared_ptr<sf::RenderWindow> app;
 	std::vector<std::vector<int>> board; // Represents the state of the Minesweeper board
 	sf::RectangleShape cellShape; // Shape for each cell on the board
 	sf::Font font;

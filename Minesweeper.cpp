@@ -4,10 +4,10 @@
 #include "Minesweeperboard.h"
 #include "MSTextController.h"
 #include "SplashScreen.h"
+#include "WindowManager.h"
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include <SFML/OpenGL.hpp>
-
 
 
 int main()
@@ -123,26 +123,28 @@ int main()
 
 
 	//Minesweeper3D game;
-	//// 
-	Minesweeper3D game(4, GameMode::NORMAL);
+	////// 
+	//Minesweeper3D game(4, GameMode::NORMAL);
 
-	game.run();
+	//game.run();
 
 
 	//sf::ContextSettings settings;
 	//settings.antialiasingLevel = 8;
 	//sf::RenderWindow window(sf::VideoMode(800, 600), "Minesweeper Splash Screen", sf::Style::Default, settings);
+
 	//WindowManager windowManager(800, 600, "Minesweeper 3D");
+	//WindowManager windowManager;
 	//sf::RenderWindow& window = windowManager.getWindow();
 	//SplashScreen splashScreen;
-	//splashScreen.run();
+	//splashScreen.run(window);
 
 	///////////////////////////////////////////
 
 	// Create the SFML window
 	//sf::RenderWindow window(sf::VideoMode(800, 600), "Minesweeper 3D");
 	  // Create an instance of the WindowManager
-	//WindowManager windowManager(800, 600, "Minesweeper 3D");
+	//WindowManager windowManager;
 	//sf::RenderWindow& window = windowManager.getWindow();
 
 	// Call the function to create the window
@@ -156,6 +158,35 @@ int main()
 
 	// Create an instance of the WindowManager class and pass the window reference
 	//WindowManager windowManager(window);
+	/*WindowManager& windowManager = WindowManager::getInstance();*/
+
+
+// Create the WindowManager instance
+	WindowManager windowManager(800, 600, "Minesweeper 3D");
+
+	// Get the shared window
+	std::shared_ptr<sf::RenderWindow> window = windowManager.getWindow();
+
+	// Create the SplashScreen instance
+	SplashScreen splashScreen(window);
+
+	// Run the splash screen
+	splashScreen.run();
+
+	//Main game loop
+	while (window->isOpen()) {
+		sf::Event event;
+		while (window->pollEvent(event)) {
+			if (event.type == sf::Event::Closed) {
+				window->close();
+			}
+		}
+
+		window->clear();
+		// Render game elements here
+		window->display();
+	}
+
 
 
 	return EXIT_SUCCESS;
