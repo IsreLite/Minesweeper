@@ -34,7 +34,7 @@ build-job:       # This job runs in the build stage, which runs first.
     # - g++ *.cpp -o mybinary
     # - g++ -c -I. *.h
     # - g++ *.cpp -o output
-    - g++ -o out -I . -I ./build *.cpp ../*.cpp
+    - g++ -o out -I . -I ./ *.cpp ../*.cpp
 
     # - g++ -g -Wall *.cpp MJinesweeper.cc -o MJinesweeper.out
     # - g++ MJinesweeper.cpp MJinesweeper.cpp Minesweeper.h
