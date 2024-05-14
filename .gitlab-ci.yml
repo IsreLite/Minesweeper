@@ -32,6 +32,7 @@ build-job:       # This job runs in the build stage, which runs first.
     - cp ../*.cpp .  # Copy all .cpp files to the build directory
     - cp -r ../src .  # Copy the src directory to the build directory
     # - g++ *.cpp -o mybinary
+    - g++ -c -I. *.h
     - g++ -c -I. *.cpp
 
   tags:
