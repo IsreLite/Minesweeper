@@ -49,16 +49,16 @@ build-job:       # This job runs in the build stage, which runs first.
   - echo "Cloning SFML repository..."
     - git clone https://github.com/SFML/SFML.git -b 2.61 sfml
 
-    - echo "Configuring CMake..."
-    - mkdir build
-    - cd build
-    - cmake -DCMAKE_BUILD_TYPE=Release -DSFML_BUILD_STATIC=ON ..
+    # - echo "Configuring CMake..."
+    # - mkdir build
+    # - cd build
+    # - cmake -DCMAKE_BUILD_TYPE=Release -DSFML_BUILD_STATIC=ON ..
 
-    - echo "Building project..."
-    - cmake --build . --config Release
+    # - echo "Building project..."
+    # # - cmake --build . --config Release
     
-    # - echo "Compiling the code..."
-    # - echo "Compile complete."
+    - echo "Compiling the code..."
+    - echo "Compile complete."
     # - mkdir build
     # - cd build
     # - cp ../*.h .  # Copy all .h files to the build directory
