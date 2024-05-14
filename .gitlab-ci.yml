@@ -15,9 +15,16 @@
 image: gcc:latest
 
 stages:          # List of stages for jobs, and their order of execution
+  
   - build
    #- test
    #- deploy
+  
+
+build-job:       # This job runs in the build stage, which runs first.
+  stage: build
+  script:
+  - echo "Installing dependencies..."
   - apt update && apt -y install make autoconf
   - sudo apt update
   - apt install -y \
@@ -32,17 +39,13 @@ stages:          # List of stages for jobs, and their order of execution
     libdrm-dev \
     libgbm-dev \
     cmake
-
-build-job:       # This job runs in the build stage, which runs first.
-  stage: build
-  script:
-
-    - echo "Compiling the code..."
-    - echo "Compile complete."
-    - mkdir build
-    - cd build
-    - cmake ..
-    - make
+  - echo "Installiation Complete"
+  - echo "Compiling the code..."
+  - echo "Compile complete."
+  - mkdir build
+  - cd build
+  - cmake ..
+  - make
     
     # - echo "Compiling the code..."
     # - echo "Compile complete."
