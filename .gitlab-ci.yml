@@ -20,7 +20,7 @@ stages:          # List of stages for jobs, and their order of execution
    #- deploy
   - apt update && apt -y install make autoconf
   - sudo apt update
-  - sudo apt install \
+  - apt install -y \
     libxrandr-dev \
     libxcursor-dev \
     libudev-dev \
@@ -30,7 +30,8 @@ stages:          # List of stages for jobs, and their order of execution
     libgl1-mesa-dev \
     libegl1-mesa-dev \
     libdrm-dev \
-    libgbm-dev
+    libgbm-dev \
+    cmake
 
 build-job:       # This job runs in the build stage, which runs first.
   stage: build
@@ -40,11 +41,18 @@ build-job:       # This job runs in the build stage, which runs first.
     - echo "Compile complete."
     - mkdir build
     - cd build
-    - cp ../*.h .  # Copy all .h files to the build directory
-    - cp ../*.cpp .  # Copy all .cpp files to the build directory
-    - cp -r ../src .  # Copy the src directory to the build directory
+    - cmake ..
+    - make
+    
+    # - echo "Compiling the code..."
+    # - echo "Compile complete."
+    # - mkdir build
+    # - cd build
+    # - cp ../*.h .  # Copy all .h files to the build directory
+    # - cp ../*.cpp .  # Copy all .cpp files to the build directory
+    # - cp -r ../src .  # Copy the src directory to the build directory
 
-    - g++ -g $(find ../ -type f -iregex ".*\.cpp") -o Minesweeper
+    # - g++ -g $(find ../ -type f -iregex ".*\.cpp") -o Minesweeper
 
   tags:
     - docker
