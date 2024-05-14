@@ -47,7 +47,7 @@ build-job:       # This job runs in the build stage, which runs first.
   # - make
 
   - echo "Cloning SFML repository..."
-    - git clone https://github.com/SFML/SFML.git -b <branch_name> sfml
+    - git clone https://github.com/SFML/SFML.git -b 2.61 sfml
 
     - echo "Configuring CMake..."
     - mkdir build
