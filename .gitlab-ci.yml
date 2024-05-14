@@ -19,6 +19,18 @@ stages:          # List of stages for jobs, and their order of execution
    #- test
    #- deploy
   - apt update && apt -y install make autoconf
+  - sudo apt update
+  - sudo apt install \
+    libxrandr-dev \
+    libxcursor-dev \
+    libudev-dev \
+    libopenal-dev \
+    libflac-dev \
+    libvorbis-dev \
+    libgl1-mesa-dev \
+    libegl1-mesa-dev \
+    libdrm-dev \
+    libgbm-dev
 
 build-job:       # This job runs in the build stage, which runs first.
   stage: build
@@ -31,14 +43,9 @@ build-job:       # This job runs in the build stage, which runs first.
     - cp ../*.h .  # Copy all .h files to the build directory
     - cp ../*.cpp .  # Copy all .cpp files to the build directory
     - cp -r ../src .  # Copy the src directory to the build directory
-    # - g++ *.cpp -o mybinary
-    # - g++ -c -I. *.h
-    # - g++ *.cpp -o output
-    # - g++ -o out -I . -I ./ *.cpp ./*.cpp
-    - g++ -g $(find ../ -type f -iregex ".*\.cpp") -o Minesweeper
 
-    # - g++ -g -Wall *.cpp Minesweeper.cc -o Minesweeper.out
-    # - g++ Minesweeper.cpp Minesweeper.cpp Minesweeper.h
+    # - g++ -g $(find ../ -type f -iregex ".*\.cpp") -o Minesweeper
+
   tags:
     - docker
 
