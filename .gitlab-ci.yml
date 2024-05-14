@@ -28,7 +28,7 @@ build-job:       # This job runs in the build stage, which runs first.
     - echo "Compile complete."
     - mkdir build
     - cd build
-    - g++ ../Minesweeper.cpp -o Minesweeper
+    - g++ *.cpp -o mybinary
     # - cmake ..
     # - make
 
