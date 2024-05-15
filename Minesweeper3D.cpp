@@ -36,10 +36,10 @@ Minesweeper3D::Minesweeper3D(std::shared_ptr<sf::RenderWindow> app, int boardsiz
 	if (!flaggedTexture.loadFromFile("src/img/flag.gif")) {
 		std::cerr << "Failed to load flagged texture" << std::endl;
 	}
-	if (!revealedTexture.loadFromFile("src/img/1.jpeg")) {
+	if (!revealedTexture.loadFromFile("src/img/rev.jpg")) {
 		std::cerr << "Failed to load revealed texture" << std::endl;
 	}
-	if (!unrevealedTexture.loadFromFile("src/img/unrevealed.jpeg")) {
+	if (!unrevealedTexture.loadFromFile("src/img/unrev.jpeg")) {
 		std::cerr << "Failed to load unrevealed texture" << std::endl;
 	}
 	if (!bombTexture.loadFromFile("src/img/bmb.jpg")) {
@@ -95,6 +95,7 @@ void Minesweeper3D::handleEvents() {
 	while (app->pollEvent(event)) {
 		if (event.type == sf::Event::Closed) {
 			app->close();
+
 		}
 		else if (event.type == sf::Event::Resized)
 		{
@@ -126,9 +127,10 @@ void Minesweeper3D::handleEvents() {
 					//update(); // Update the game state after toggling a flag
 				}
 			}
+
+
 			else
 			{
-
 				handleGameButtons();
 			}
 		}
@@ -246,10 +248,10 @@ void Minesweeper3D::handleGameButtons() {
 		}
 		else if (backToHomeText.getGlobalBounds().contains(mousePosX, mousePosY)) {
 			// Reset the game state and any necessary variables
-			resetGame();
 			// Create a new instance of the SplashScreen class and pass the window shared pointer
 			SplashScreen splashScreen(app);
 			splashScreen.displayUI();
+			resetGame();
 
 		}
 	}
@@ -280,6 +282,14 @@ void Minesweeper3D::update() {
 		}
 		else if (gameState == GameState::FINISHED_LOSS) {
 			// Play victory sound
+			// If a bomb is clicked, reveal all cells
+			for (int i = 0; i < BOARD_SIZE; ++i) {
+				for (int j = 0; j < BOARD_SIZE; ++j) {
+					minesweeperBoard.board[i][j]->isRevealed = true;
+				}
+			}
+			render();
+
 			isGameLost = true;
 			explosionSound.play();
 			sf::sleep(sf::milliseconds(1000));
@@ -350,20 +360,11 @@ void Minesweeper3D::drawBoard()
 			sf::Texture* textureToUse = nullptr;
 
 			if (minesweeperBoard.board[x][y]->isRevealed && minesweeperBoard.board[x][y]->hasMine) {
-				//textureToUse = &bombTexture;
-				//this->cellShape.setTexture(textureToUse);
-				//this->cellShape.setFillColor(sf::Color::Black);
-				//app->draw(cellShape);
-				this->cellShape.setFillColor(sf::Color::Yellow);
-
-				resetGame();
-			}
-			if (minesweeperBoard.board[x][y]->hasMine) {
-				// Draw the cell shape
 				textureToUse = &bombTexture;
 				this->cellShape.setTexture(textureToUse);
-				//this->cellShape.setFillColor(sf::Color::Red);
-				//app->draw(cellShape);
+
+				sf::sleep(sf::milliseconds(50));
+				resetGame();
 			}
 			else if (minesweeperBoard.board[x][y]->isRevealed) {
 				int mineCount = minesweeperBoard.countMines(x, y);
@@ -379,11 +380,6 @@ void Minesweeper3D::drawBoard()
 					textColor = sf::Color::Red;
 				}
 
-				//sf::Color customColor(255, 128, 0); // Orange
-				//this->cellShape.setFillColor(customColor); // Revealed cell with number of adjacent mines
-
-
-
 				if (mineCount > 0) { // Only display the count if it's greater than 0
 					mineCountText.setString(std::to_string(mineCount));
 					mineCountText.setFont(font);
@@ -392,32 +388,20 @@ void Minesweeper3D::drawBoard()
 					mineCountText.setPosition((xPos + x - 1) + CELL_SIZE / 4, (yPos - y + 2) + CELL_SIZE / 4); // Position the text
 				}
 
-
 				// Draw the cell shape
-
 				textureToUse = &revealedTexture;
 				this->cellShape.setTexture(textureToUse);
-
-				//app->draw(cellShape);
 			}
 			else if (minesweeperBoard.board[x][y]->hasFlag) {
-				//textureToUse = &flaggedTexture;
-				// Draw the cell shape
-				this->cellShape.setFillColor(sf::Color::Yellow); // Flag
-				//app->draw(cellShape);
+				textureToUse = &flaggedTexture;
+				this->cellShape.setTexture(textureToUse);
 			}
 			else {
-				//textureToUse = &unrevealedTexture;
-				this->cellShape.setFillColor(sf::Color::White); // Unrevealed cell
 				textureToUse = &unrevealedTexture;
 				this->cellShape.setTexture(textureToUse);
-				// Draw the cell shape
-				//app->draw(cellShape);
 			}
 
 			//Apply the texture to the cell shape
-			//cellShape.setTexture(textureToUse);
-
 			app->draw(cellShape);
 			app->draw(mineCountText);
 		}
@@ -447,9 +431,11 @@ void Minesweeper3D::render() {
 	}
 	else if (isGamePaused) {
 		// Draw a semi-transparent overlay or message
+		sf::sleep(sf::milliseconds(300));
 		displayOverlay(1);
 	}
 	else if (isGameLost) {
+		sf::sleep(sf::milliseconds(2000));
 		displayOverlay(2);
 	}
 	else if (isGameWin) {
