@@ -1,11 +1,17 @@
 #include "Minesweeper3D.h"
+#include <iostream>
 
 
-Minesweeper3D::Minesweeper3D(std::shared_ptr<sf::RenderWindow> app, int boardsize, GameMode gamemode) {
+
+Minesweeper3D::Minesweeper3D(std::shared_ptr<sf::RenderWindow> app, int boardsize, GameMode gamemode)
+{
 
 	this->BOARD_SIZE = boardsize;
 	this->gameMode = gamemode;
 	this->app = app;
+
+	updateMousePos(); // Update mouse position on initialization
+
 	minesweeperBoard = MinesweeperBoard(BOARD_SIZE, BOARD_SIZE, gameMode);
 
 	// Initialize the window
@@ -30,13 +36,13 @@ Minesweeper3D::Minesweeper3D(std::shared_ptr<sf::RenderWindow> app, int boardsiz
 	if (!flaggedTexture.loadFromFile("src/img/flag.gif")) {
 		std::cerr << "Failed to load flagged texture" << std::endl;
 	}
-	if (!revealedTexture.loadFromFile("src/img/flag.gif")) {
+	if (!revealedTexture.loadFromFile("src/img/1.jpeg")) {
 		std::cerr << "Failed to load revealed texture" << std::endl;
 	}
-	if (!unrevealedTexture.loadFromFile("src/img/flag.gif")) {
+	if (!unrevealedTexture.loadFromFile("src/img/unrevealed.jpeg")) {
 		std::cerr << "Failed to load unrevealed texture" << std::endl;
 	}
-	if (!bombTexture.loadFromFile("src/img/flag.gif")) {
+	if (!bombTexture.loadFromFile("src/img/bmb.jpg")) {
 		std::cerr << "Failed to load unrevealed texture" << std::endl;
 	}
 	// Load sound effects
@@ -68,20 +74,22 @@ Minesweeper3D::Minesweeper3D(std::shared_ptr<sf::RenderWindow> app, int boardsiz
 	// Calculate the initial grid starting position
 	std::tie(startX, startY) = getGridStartPosition();
 	gameClock.restart();
-
-	//initialize(BOARD_SIZE, gameMode); // Default parameters
 }
 
-//Minesweeper3D::Minesweeper3D(int boardsize, GameMode gamemode) {
-//	// copy the data from the provided instance
-//	this->BOARD_SIZE = boardsize;
-//	this->gameMode = gamemode;
-//
-//	// start the game loop
-//	//initialize(boardsize, gamemode); // custom parameters
-//	run();
-//}
-
+// Function to update the mouse position internally
+void Minesweeper3D::updateMousePos() {
+	mousePos = sf::Mouse::getPosition(*app);
+	mousePosX = static_cast<float>(mousePos.x);
+	mousePosY = static_cast<float>(mousePos.y);
+}
+sf::Vector2i Minesweeper3D::getMousePos() const {
+	return mousePos;
+}
+void Minesweeper3D::updateWindowSize() {
+	windowSize = app->getSize();
+	windowWidth = static_cast<float>(windowSize.x);
+	windowHeight = static_cast<float>(windowSize.y);
+}
 void Minesweeper3D::handleEvents() {
 
 	while (app->pollEvent(event)) {
@@ -112,27 +120,6 @@ void Minesweeper3D::handleEvents() {
 				if (event.mouseButton.button == sf::Mouse::Left) {
 					minesweeperBoard.revealField(x, y);
 					update();
-
-					// Update the game state after toggling a flag
-					//		if (minesweeperBoard.board[x][y]->hasMine) {
-			//			// Play  sound
-			///*			explosionSound.setBuffer(explosionBuffer);
-			//			explosionSound.play();*/
-			//			gameOverSound.play();
-
-			//			// If a bomb is clicked, reveal all cells
-			//			for (int i = 0; i < BOARD_SIZE; ++i) {
-			//				for (int j = 0; j < BOARD_SIZE; ++j) {
-			//					minesweeperBoard.board[i][j]->isRevealed = true;
-			//				}
-			//			}
-			//			update(); // Update the game state after toggling a flag
-
-			//		}
-			//		else {
-			//			minesweeperBoard.revealField(x, y);
-			//			update(); // Update the game state after toggling a flag
-			//		}
 				}
 				else if (event.mouseButton.button == sf::Mouse::Right) {
 					minesweeperBoard.toggleFlag(x, y);
@@ -144,94 +131,94 @@ void Minesweeper3D::handleEvents() {
 
 				handleGameButtons();
 			}
-
-			//updateTimer();
 		}
 	}
 
 }
-void Minesweeper3D::initInGameUtils() {
+void Minesweeper3D::initializeButton(sf::Text& text, sf::RectangleShape& button, const sf::String& label,
+	const sf::Color& fillColor, const sf::Vector2f& buttonPosition, const sf::Vector2f& textOffset) {
+
 	// Initialize the exit button
-	exitButton.setSize(sf::Vector2f(100, 50));
-	exitButton.setPosition(static_cast<float>(currentWindowSize.x) - 120.0f, 10.0f);
-	exitButton.setFillColor(sf::Color::Red);
-	exitButton.setOutlineColor(sf::Color::Black);
-	exitButton.setOutlineThickness(2.0f);
+	button.setSize(sf::Vector2f(100, 50));
+	button.setPosition(buttonPosition); // Set position as per your requirement
+	button.setOutlineColor(sf::Color::Black);
+	button.setOutlineThickness(2.0f);
 
 	// Initialize the exit text
-	exitText.setFont(font);
-	exitText.setString("Exit");
-	exitText.setCharacterSize(24);
-	exitText.setFillColor(sf::Color::White);
-	exitText.setPosition(exitButton.getPosition().x + 20, exitButton.getPosition().y + 10);
+	text.setFont(font);
+	text.setString(label);
+	text.setCharacterSize(24);
+	text.setFillColor(sf::Color::White);
+	text.setPosition(button.getPosition() + textOffset);
 
-	pauseButton.setSize(sf::Vector2f(100, 50));
-	pauseButton.setPosition(20, 10);
-	pauseButton.setFillColor(sf::Color::Yellow);
-	pauseButton.setOutlineColor(sf::Color::Black);
-	pauseButton.setOutlineThickness(2.0f);
-	pauseText.setFont(font);
+	// Set the button's fill color
+	button.setFillColor(fillColor);
+}
+void Minesweeper3D::initInGameUtils() {
+	updateWindowSize();
+	// Initialize the exit button
+	sf::Color buttonColor = sf::Color::Red;
+	sf::Vector2f buttonPosition(windowWidth - 120.0f, 10.0f);
+	sf::Vector2f textOffset(20, 10);
+	initializeButton(exitText, exitButton, "Exit", buttonColor, buttonPosition, textOffset);
+
+	// Initialize the pause button
+	buttonColor = sf::Color::Yellow;
+	buttonPosition = { 20, 10 };
+	initializeButton(pauseText, pauseButton, "Pause", buttonColor, buttonPosition, textOffset);
+	pauseText.setPosition(pauseButton.getPosition().x + 15, pauseButton.getPosition().y + 10);
+	pauseText.setFillColor(sf::Color::Black);
 	isGamePaused ?
 		(pauseText.setString("Resume"), pauseButton.setSize(sf::Vector2f(130, 50))) :
 		(pauseText.setString("Pause"), pauseButton.setSize(sf::Vector2f(110, 50)));
 
-	pauseText.setCharacterSize(24);
-	pauseText.setFillColor(sf::Color::Black);
-	pauseText.setPosition(pauseButton.getPosition().x + 15, pauseButton.getPosition().y + 10);
+	// Initialize the home button
+	buttonColor = sf::Color::Blue;
+	buttonPosition = { 20, windowHeight - 70.0f };
+	initializeButton(backToHomeText, backToHomeButton, "Home", buttonColor, buttonPosition, textOffset);
+	backToHomeText.setPosition(backToHomeButton.getPosition().x + 15, backToHomeButton.getPosition().y + 10);
 
-	//muteButton.setPosition(static_cast<float>(currentWindowSize.x) - 570.0f, static_cast<float>(currentWindowSize.y) - 500.0f);
-	muteButton.setPosition(static_cast<float>(currentWindowSize.x) - 120, static_cast<float>(currentWindowSize.y) - 120.0f);
+	// Initialize the mute button
+	muteButton.setPosition(windowWidth - 120.0f, windowHeight - 110.0f);
 	muteButton.setSize(sf::Vector2f(100, 100));
-	//muteButton.setFillColor(sf::Color::Transparent);
-	muteText.setFont(font);
-	muteText.setFillColor(sf::Color::White);
-	muteText.setCharacterSize(24);
-
-	/*	isMuted ?
-			(muteText.setString("Unmute"), muteButton.setSize(sf::Vector2f(140, 50))) :
-			(muteText.setString("Mute"), muteButton.setSize(sf::Vector2f(110, 50)));*/
 	isMuted ?
 		// Set the texture of the mute button
 		(muteButton.setTexture(&unmuteButtonTexture)) :
 		(muteButton.setTexture(&muteButtonTexture));
-	muteText.setPosition(muteButton.getPosition().x + 15, muteButton.getPosition().y + 10);
 
-	// In the render function
+	// Initialize the timer
 	sf::Text timerText;
+	int minutes = static_cast<int>(elapsedTime.asSeconds()) / 60;
+	int seconds = static_cast<int>(elapsedTime.asSeconds()) % 60;
 	timerText.setFont(font);
 	timerText.setCharacterSize(24);
 	timerText.setFillColor(sf::Color::White);
-	timerText.setPosition(static_cast<float>(currentWindowSize.x / 2.2f) - timerText.getGlobalBounds().width, 10);
-
-
-	int minutes = static_cast<int>(elapsedTime.asSeconds()) / 60;
-	int seconds = static_cast<int>(elapsedTime.asSeconds()) % 60;
+	timerText.setPosition((windowWidth / 2.2f) - timerText.getGlobalBounds().width, 10);
 	timerText.setString("Time: " + std::to_string(minutes) + ":" + std::to_string(seconds));
 
+	//Display buttons and pause button when game is running
 	this->app->draw(timerText);
-	//Display pause button when game is running
-	if (!isGameWin && !isGameLoss) {
+	if (!isGameWin && !isGameLost) {
 		app->draw(pauseButton);
 		app->draw(pauseText);
 	}
 	app->draw(muteButton);
-	app->draw(muteText);
 	app->draw(exitButton);
 	app->draw(exitText);
+	app->draw(backToHomeButton);
+	app->draw(backToHomeText);
 
 	//Start clock countdown 
 	updateTimer();
 
 }
-
 void Minesweeper3D::handleGameButtons() {
+	updateMousePos();
 	if (event.type == sf::Event::MouseButtonPressed) {
-		sf::Vector2i mousePos = sf::Mouse::getPosition(*app);
-		if (exitButton.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
+		if (exitButton.getGlobalBounds().contains(mousePosX, mousePosY)) {
 			app->close();
 		}
-
-		if (pauseButton.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
+		else if (pauseButton.getGlobalBounds().contains(mousePosX, mousePosY)) {
 			isGamePaused = !isGamePaused;
 
 			if (isGamePaused) {
@@ -244,8 +231,7 @@ void Minesweeper3D::handleGameButtons() {
 			}
 
 		}
-
-		if (muteButton.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
+		else if (muteButton.getGlobalBounds().contains(mousePosX, mousePosY)) {
 			// Toggle mute state
 			isMuted = !isMuted;
 
@@ -258,21 +244,28 @@ void Minesweeper3D::handleGameButtons() {
 
 			// Update the mute button text
 		}
+		else if (backToHomeText.getGlobalBounds().contains(mousePosX, mousePosY)) {
+			// Reset the game state and any necessary variables
+			resetGame();
+			// Create a new instance of the SplashScreen class and pass the window shared pointer
+			SplashScreen splashScreen(app);
+			splashScreen.displayUI();
 
+		}
 	}
 }
 void Minesweeper3D::updateTimer() {
-	if (!isGamePaused && !isGameWin && !isGameLoss) {
+	if (!isGamePaused && !isGameWin && !isGameLost) {
 		// Update the elapsed time if the game is not paused or finished
 		elapsedTime = gameClock.getElapsedTime() - pauseTime;;
 	}
 }
 void Minesweeper3D::update() {
 	// Update game state here if needed
-// Call the getGameState function to update the game state
+	// Call the getGameState function to update the game state
 	GameState gameState = minesweeperBoard.getGameState();
 
-	if (!isGamePaused && !isGameLoss || !isGamePaused && !isGameWin) {
+	if (!isGamePaused && !isGameLost || !isGamePaused && !isGameWin) {
 		// Update the elapsed time if the game is not paused or finished
 		elapsedTime = gameClock.getElapsedTime();
 	}
@@ -287,7 +280,9 @@ void Minesweeper3D::update() {
 		}
 		else if (gameState == GameState::FINISHED_LOSS) {
 			// Play victory sound
-			isGameLoss = true;
+			isGameLost = true;
+			explosionSound.play();
+			sf::sleep(sf::milliseconds(1000));
 			gameOverSound.play();
 		}
 	}
@@ -297,20 +292,38 @@ void Minesweeper3D::update() {
 		render();
 	}
 }
-
-void Minesweeper3D::displayWinOverlay() {
+void Minesweeper3D::displayOverlay(int scenario) {
 	// Draw a semi-transparent overlay or message
-	sf::RectangleShape winOverlay(sf::Vector2f(static_cast<float>(app->getSize().x), static_cast<float>(app->getSize().y)));
-	winOverlay.setFillColor(sf::Color(0, 0, 0, 128)); // Semi-transparent black
-	app->draw(winOverlay);
+	sf::RectangleShape overlay(sf::Vector2f(windowWidth, windowHeight));
+	overlay.setFillColor(sf::Color(0, 0, 0, 128)); // Semi-transparent black
 
-	sf::Text winText("You've Won!", font, 48);
-	winText.setFillColor(sf::Color::White);
-	winText.setPosition(static_cast<float>(app->getSize().x) / 2.0f - winText.getGlobalBounds().width / 2.0f,
-		static_cast<float>(app->getSize().y) / 2.0f - winText.getGlobalBounds().height / 2.0f);
-	app->draw(winText);
+	sf::Text overlayText("", font, 48);
+	overlayText.setFillColor(sf::Color::White);
+
+	// Set the overlay text and position based on the scenario
+	switch (scenario) {
+	case 1:
+		overlayText.setString("Game Paused");
+		break;
+	case 2:
+		overlayText.setString("Game Over");
+		break;
+	case 3:
+		overlayText.setString("You've Won!");
+		break;
+	default:
+		// Invalid scenario, do nothing
+		return;
+	}
+
+	// Position the text in the center of the window
+	overlayText.setPosition(windowWidth / 2.0f - overlayText.getGlobalBounds().width / 2.0f,
+		windowHeight / 2.0f - overlayText.getGlobalBounds().height / 2.0f);
+
+	// Draw the overlay and text
+	app->draw(overlay);
+	app->draw(overlayText);
 }
-
 void Minesweeper3D::drawBoard()
 {
 
@@ -336,19 +349,21 @@ void Minesweeper3D::drawBoard()
 			// Determine which texture to use based on cell state
 			sf::Texture* textureToUse = nullptr;
 
-			if (minesweeperBoard.board[x][y]->hasMine && minesweeperBoard.board[x][y]->isRevealed) {
+			if (minesweeperBoard.board[x][y]->isRevealed && minesweeperBoard.board[x][y]->hasMine) {
 				//textureToUse = &bombTexture;
 				//this->cellShape.setTexture(textureToUse);
-				this->cellShape.setFillColor(sf::Color::Magenta);
-				app->draw(cellShape);
+				//this->cellShape.setFillColor(sf::Color::Black);
+				//app->draw(cellShape);
+				this->cellShape.setFillColor(sf::Color::Yellow);
+
+				resetGame();
 			}
 			if (minesweeperBoard.board[x][y]->hasMine) {
 				// Draw the cell shape
-
-				this->cellShape.setFillColor(sf::Color::Red); // Revealed cell with number of adjacent mines
 				textureToUse = &bombTexture;
-				//this->cellShape.setTexture(textureToUse);
-				app->draw(cellShape);
+				this->cellShape.setTexture(textureToUse);
+				//this->cellShape.setFillColor(sf::Color::Red);
+				//app->draw(cellShape);
 			}
 			else if (minesweeperBoard.board[x][y]->isRevealed) {
 				int mineCount = minesweeperBoard.countMines(x, y);
@@ -364,47 +379,47 @@ void Minesweeper3D::drawBoard()
 					textColor = sf::Color::Red;
 				}
 
-				//if (mineCount >= 0)
+				//sf::Color customColor(255, 128, 0); // Orange
+				//this->cellShape.setFillColor(customColor); // Revealed cell with number of adjacent mines
 
-				//	// Display the number of adjacent mines
-				//	//textureToUse = &revealedTexture;
-				sf::Color customColor(255, 128, 0); // Orange
 
-				this->cellShape.setFillColor(customColor); // Revealed cell with number of adjacent mines
-				//app->draw(this->cellShape);
-				if (mineCount > 0)  // Only display the count if it's greater than 0
+
+				if (mineCount > 0) { // Only display the count if it's greater than 0
 					mineCountText.setString(std::to_string(mineCount));
+					mineCountText.setFont(font);
+					mineCountText.setCharacterSize(30);
+					mineCountText.setFillColor(textColor);
+					mineCountText.setPosition((xPos + x - 1) + CELL_SIZE / 4, (yPos - y + 2) + CELL_SIZE / 4); // Position the text
+				}
 
-				mineCountText.setFont(font);
-				mineCountText.setCharacterSize(30);
-				mineCountText.setFillColor(textColor);
-				mineCountText.setPosition((xPos + x - 1) + CELL_SIZE / 4, (yPos - y + 2) + CELL_SIZE / 4); // Position the text
+
 				// Draw the cell shape
 
-				//cellShape.setTexture(textureToUse);
+				textureToUse = &revealedTexture;
+				this->cellShape.setTexture(textureToUse);
 
-				app->draw(cellShape);
-				app->draw(mineCountText);
-
-
+				//app->draw(cellShape);
 			}
 			else if (minesweeperBoard.board[x][y]->hasFlag) {
 				//textureToUse = &flaggedTexture;
 				// Draw the cell shape
 				this->cellShape.setFillColor(sf::Color::Yellow); // Flag
-				app->draw(cellShape);
+				//app->draw(cellShape);
 			}
 			else {
 				//textureToUse = &unrevealedTexture;
 				this->cellShape.setFillColor(sf::Color::White); // Unrevealed cell
+				textureToUse = &unrevealedTexture;
+				this->cellShape.setTexture(textureToUse);
 				// Draw the cell shape
-				app->draw(cellShape);
+				//app->draw(cellShape);
 			}
 
 			//Apply the texture to the cell shape
 			//cellShape.setTexture(textureToUse);
 
-
+			app->draw(cellShape);
+			app->draw(mineCountText);
 		}
 	}
 	//}
@@ -415,7 +430,6 @@ void Minesweeper3D::drawBoard()
 	//mineCountText.setPosition(10, 10); // Position the text relative to the grid starting position
 	//app->draw(mineCountText);
 }
-
 void Minesweeper3D::render() {
 	app->clear(sf::Color::Black);
 
@@ -433,26 +447,18 @@ void Minesweeper3D::render() {
 	}
 	else if (isGamePaused) {
 		// Draw a semi-transparent overlay or message
-		sf::RectangleShape pauseOverlay(sf::Vector2f(static_cast<float>(app->getSize().x), static_cast<float>(app->getSize().y)));
-		pauseOverlay.setFillColor(sf::Color(0, 0, 0, 128)); // Semi-transparent black
-		app->draw(pauseOverlay);
-
-		sf::Text pausedText("Game Paused", font, 48);
-		pausedText.setFillColor(sf::Color::White);
-		pausedText.setPosition(static_cast<float>(app->getSize().x) / 2.0f - pausedText.getGlobalBounds().width / 2.0f,
-			static_cast<float>(app->getSize().y) / 2.0f - pausedText.getGlobalBounds().height / 2.0f);
-		app->draw(pausedText);
-
+		displayOverlay(1);
+	}
+	else if (isGameLost) {
+		displayOverlay(2);
 	}
 	else if (isGameWin) {
-		displayWinOverlay();
-
+		displayOverlay(3);
 	}
 
 	else {
 		// Draw the 3D board
 		this->drawBoard();
-
 	}
 
 	// Display the updated window
@@ -461,4 +467,16 @@ void Minesweeper3D::render() {
 
 
 }
+void Minesweeper3D::resetGame() {
+	// Reset the game board
+	this->board.clear();
+	//delete& board;
+	// Reset player score
+	//playerScore = 0;
 
+	// Reset game timer
+	pauseClock.restart();
+
+	// Reset any other game-related variables
+	// ...
+}

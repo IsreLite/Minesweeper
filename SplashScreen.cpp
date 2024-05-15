@@ -264,6 +264,10 @@ void SplashScreen::displayMainMenu() {
 	rightBoardSizeArrowText.setPosition(static_cast<float>(window->getSize().x / 2 + boardSizeText.getGlobalBounds().width / 2 + 10),
 		static_cast<float>(window->getSize().y / 2)); // Adjust position as needed
 
+
+
+
+	// Difficulty Logic
 	GameMode selectedGameMode = GameMode::EASY;
 
 	std::string selectedDifficulty = "Easy";

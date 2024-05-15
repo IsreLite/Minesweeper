@@ -26,7 +26,7 @@ private:
 	GameMode gameMode;
 	GameState gameState;
 	friend class Minesweeper3D;
-	bool dontRedirect = false;
+	bool isFirstMove = 0;
 	bool isValidIndex(int row, int col) const {
 		return row >= 0 && row < height && col >= 0 && col < width;
 	}
@@ -80,6 +80,7 @@ public:
 
 private:
 	void initializeBoard();
+	bool hasAtLeastOneCellRevealed();
 	void setSpecificFields() const;
 	void initializeAllFields();
 	void placeMinesRandomly(int numMines);
