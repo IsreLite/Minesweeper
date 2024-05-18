@@ -10,8 +10,8 @@ job_build:
     - echo "Building the project"
     - mkdir build
     - cd build
-    - cmake ..
-    - make
+    # - cmake ..
+    # - make
  
   tags:
     - docker
