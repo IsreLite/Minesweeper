@@ -50,8 +50,3 @@ This game was developed as a learning project, and it wouldn't have been possibl
 - C++20 language reference: https://en.cppreference.com/w/cpp/20
 
 Enjoy playing Minesweeper 3D!
-
-Citations:
-[1] https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/11959100/9e15261d-5c4f-4918-81f2-4214a5d1f635/paste.txt
-[2] https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/11959100/611e3b2d-5baa-4a7f-8670-030a41564774/paste-2.txt
-[3] https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/11959100/3888f84a-76e6-40df-8dbb-8543994d92c4/paste.txt
