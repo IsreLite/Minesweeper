@@ -11,7 +11,6 @@
 
 
 
-const float CELL_SIZE = 50.0f; // Size of each cell in pixels
 
 class Minesweeper3D
 {
@@ -22,44 +21,26 @@ public:
 	Minesweeper3D(std::shared_ptr<sf::RenderWindow> app, int BOARD_SIZE, GameMode gameMode);
 
 
-	std::pair<float, float> getGridStartPosition()
-	{
-		// Get the size of the window
-		sf::Vector2u wSize = app->getSize();
-
-		// Check if the window size has changed
-		if (wSize != currentWindowSize)
-		{
-			// Window size has changed, recalculate the grid parameters
-			currentWindowSize = wSize;
-
-			// Calculate the starting position of the grid
-			float gridWidth = BOARD_SIZE * CELL_SIZE;
-			float gridHeight = BOARD_SIZE * CELL_SIZE;
-			startX = (currentWindowSize.x - gridWidth) / 2;
-			startY = (currentWindowSize.y - gridHeight) / 2;
-
-		}
-
-		return std::make_pair(startX, startY);
-	}
 
 	void run() {
 		while (app->isOpen()) {
 			handleEvents();
-			//update();
+			updateWindowSize();
 			render();
 		}
 	}
 
 
+
 private:
 	MinesweeperBoard minesweeperBoard;
 	GameMode gameMode;
+	friend class SplashScreen;
 
 	int BOARD_SIZE; // Assuming a square board
 	float startX, startY, mousePosX, mousePosY, windowWidth, windowHeight;
 	bool isGamePaused, isGameWin, isGameLost, isMuted;
+	float CELL_SIZE = 50.0f; // Size of each cell in pixels
 
 	std::vector<std::vector<int>> board; // Represents the state of the Minesweeper board
 
@@ -117,6 +98,9 @@ private:
 	void resetGame();
 	void updateMousePos();
 	void updateWindowSize();
+
+	std::pair<float, float> getGridStartPosition();
+
 	sf::Vector2i getMousePos() const;
 	sf::Vector2f getMousePosFloat() const;
 	void initializeButton(sf::Text& text, sf::RectangleShape& button, const sf::String& label,

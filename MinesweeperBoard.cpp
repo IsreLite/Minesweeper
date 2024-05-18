@@ -18,6 +18,8 @@ MinesweeperBoard::MinesweeperBoard() : width(7), height(5), gameMode(GameMode::E
 
 MinesweeperBoard::MinesweeperBoard(int w, int h, GameMode mode) : width(w), height(h), gameMode(mode) {
 	std::cout << "I am parametric constructor" << std::endl;
+
+
 	initializeBoard();
 	if (mode == GameMode::DEBUG) {
 		// Place mines as per DEBUG mode requirements

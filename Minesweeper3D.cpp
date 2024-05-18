@@ -11,14 +11,12 @@ Minesweeper3D::Minesweeper3D(std::shared_ptr<sf::RenderWindow> app, int boardsiz
 	this->app = app;
 
 	updateMousePos(); // Update mouse position on initialization
+	updateWindowSize();
 
 	minesweeperBoard = MinesweeperBoard(BOARD_SIZE, BOARD_SIZE, gameMode);
 
-	// Initialize the window
-	app->create(sf::VideoMode(800, 600), "Minesweeper 3D");
-
 	// Set the initial view of the window
-	sf::FloatRect initialView(0, 0, 800, 600);
+	sf::FloatRect initialView(0, 0, windowWidth, windowHeight);
 	app->setView(sf::View(initialView));
 
 	// Initialize the board
@@ -90,6 +88,33 @@ void Minesweeper3D::updateWindowSize() {
 	windowWidth = static_cast<float>(windowSize.x);
 	windowHeight = static_cast<float>(windowSize.y);
 }
+
+std::pair<float, float> Minesweeper3D::getGridStartPosition()
+{
+	updateWindowSize();
+	// Get the size of the window
+	sf::Vector2u wSize = app->getSize();
+
+	// Check if the window size has changed
+	if (wSize != currentWindowSize)
+	{
+		// Window size has changed, recalculate the grid parameters
+		currentWindowSize = wSize;
+
+		// Adjust BOARD_SIZE based on window size (example: increase by 1 cell for every 100 pixels over 800)
+		CELL_SIZE = std::min(windowWidth, windowHeight) / 6;
+
+
+		// Calculate the starting position of the grid
+		float gridWidth = BOARD_SIZE * CELL_SIZE;
+		float gridHeight = BOARD_SIZE * CELL_SIZE;
+		startX = (currentWindowSize.x - gridWidth) / 2;
+		startY = (currentWindowSize.y - gridHeight) / 2;
+
+	}
+
+	return std::make_pair(startX, startY);
+}
 void Minesweeper3D::handleEvents() {
 
 	while (app->pollEvent(event)) {
@@ -99,6 +124,16 @@ void Minesweeper3D::handleEvents() {
 		}
 		else if (event.type == sf::Event::Resized)
 		{
+			sf::Vector2u newSize(event.size.width, event.size.height);
+			if (newSize.x < MIN_WINDOW_WIDTH || newSize.y < MIN_WINDOW_HEIGHT) {
+				newSize.x = std::max(newSize.x, MIN_WINDOW_WIDTH);
+				newSize.y = std::max(newSize.y, MIN_WINDOW_HEIGHT);
+				app->setSize(newSize);
+			}
+			windowWidth = static_cast<float>(newSize.x);
+			windowHeight = static_cast<float>(newSize.y);
+			drawBoard();
+			updateWindowSize();
 			// Window has been resized, recalculate the grid parameters
 			float startX, startY;
 			std::tie(startX, startY) = getGridStartPosition();
@@ -250,7 +285,7 @@ void Minesweeper3D::handleGameButtons() {
 			// Reset the game state and any necessary variables
 			// Create a new instance of the SplashScreen class and pass the window shared pointer
 			SplashScreen splashScreen(app);
-			splashScreen.displayUI();
+			splashScreen.displayMainMenu();
 			resetGame();
 
 		}
@@ -292,7 +327,7 @@ void Minesweeper3D::update() {
 
 			isGameLost = true;
 			explosionSound.play();
-			sf::sleep(sf::milliseconds(1000));
+			sf::sleep(sf::milliseconds(300));
 			gameOverSound.play();
 		}
 	}
@@ -344,8 +379,8 @@ void Minesweeper3D::drawBoard()
 	{
 		for (int y = 0; y < BOARD_SIZE; ++y)
 		{
-			float xPos = startX + x * CELL_SIZE;
-			float yPos = startY + y * CELL_SIZE;
+			float xPos = startX + x * this->CELL_SIZE;
+			float yPos = startY + y * this->CELL_SIZE;
 			float zPos = 0.0f; // Assuming all cells are on the same plane
 			sf::Text mineCountText;
 
@@ -353,8 +388,9 @@ void Minesweeper3D::drawBoard()
 			this->cellShape.move(0, zPos); // Adjust for the z position
 
 			// Set cell position
-			cellShape.setPosition(xPos, yPos);
-			cellShape.move(0, zPos); // Adjust for the z position
+			this->cellShape.setSize(sf::Vector2f(this->CELL_SIZE, this->CELL_SIZE)); // Update cell size
+			this->cellShape.setPosition(xPos, yPos);
+			this->cellShape.move(0, zPos); // Adjust for the z position
 
 			// Determine which texture to use based on cell state
 			sf::Texture* textureToUse = nullptr;
@@ -385,7 +421,9 @@ void Minesweeper3D::drawBoard()
 					mineCountText.setFont(font);
 					mineCountText.setCharacterSize(30);
 					mineCountText.setFillColor(textColor);
-					mineCountText.setPosition((xPos + x - 1) + CELL_SIZE / 4, (yPos - y + 2) + CELL_SIZE / 4); // Position the text
+					// Add offset to text postion
+					mineCountText.setPosition((xPos + x + 8) + this->CELL_SIZE / 4, (yPos - y + 2) + CELL_SIZE / 4);
+					// Position the text needs more dynamic adjustments
 				}
 
 				// Draw the cell shape
@@ -426,6 +464,7 @@ void Minesweeper3D::render() {
 
 	if (windowSize != currentWindowSize) {
 		// Window size has changed, recalculate the grid parameters
+		updateWindowSize();
 		this->currentWindowSize = windowSize;
 		this->drawBoard();
 	}
