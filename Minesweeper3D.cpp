@@ -1,7 +1,13 @@
+/*
+ * Copyright 2024 Israel Owolabi
+ *
+ * Licensed under the MIT License.
+ * See LICENSE file in the project root for full license information.
+ */
+
+
 #include "Minesweeper3D.h"
 #include <iostream>
-
-
 
 Minesweeper3D::Minesweeper3D(std::shared_ptr<sf::RenderWindow> app, int boardsize, GameMode gamemode)
 {
@@ -172,8 +178,8 @@ void Minesweeper3D::handleEvents() {
 	}
 
 }
-void Minesweeper3D::initializeButton(sf::Text& text, sf::RectangleShape& button, const sf::String& label,
-	const sf::Color& fillColor, const sf::Vector2f& buttonPosition, const sf::Vector2f& textOffset) {
+const void Minesweeper3D::initializeButton(sf::Text& text, sf::RectangleShape& button, const sf::String& label,
+	const sf::Color& fillColor, const sf::Vector2f& buttonPosition, const sf::Vector2f& textOffset) const {
 
 	// Initialize the exit button
 	button.setSize(sf::Vector2f(100, 50));

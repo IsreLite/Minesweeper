@@ -1,5 +1,13 @@
-// Minesweeper.cpp : This file contains the 'main' function. Program execution begins and ends there.
-//
+/*
+ * Copyright 2024 Israel Owolabi
+ *
+ * Licensed under the MIT License.
+ * See LICENSE file in the project root for full license information.
+ */
+
+ // Minesweeper.cpp : This file contains the 'main' function and other debugging test case.
+ //  Program execution begins and ends there.
+
 #include "Minesweeper3D.h"
 #include "Minesweeperboard.h"
 #include "MSTextController.h"

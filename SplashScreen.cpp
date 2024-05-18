@@ -1,3 +1,11 @@
+/*
+ * Copyright 2024 Israel Owolabi
+ *
+ * Licensed under the MIT License.
+ * See LICENSE file in the project root for full license information.
+ */
+
+
 #include "Minesweeper3D.h"
 #include "MinesweeperBoard.h"
 #include "SplashScreen.h"
@@ -22,7 +30,7 @@ SplashScreen::SplashScreen(std::shared_ptr<sf::RenderWindow> window) : window(wi
 	}
 
 	if (!aboveLoadingBarTexture.loadFromFile("src/img/minesweeper_image.jpeg")) {
-		std::cerr << "Failed to load splash_screen.png" << std::endl;
+		std::cerr << "Failed to load minesweeper_image.jpeg" << std::endl;
 		std::cerr << "Loading a placeholder image instead." << std::endl;
 		sf::Image placeholderImage;
 		placeholderImage.create(400, 300, sf::Color::Red); // Placeholder image size
@@ -167,7 +175,7 @@ void SplashScreen::loadAndDisplayAboveLoadingBarImage() {
 		windowHeight / 2 + logoTexture.getSize().y / 2 + 20); // Position the loading text below the logo
 
 	// Define game text properties
-	sf::Text gameText("Minesweeper 3D", font, 70);
+	sf::Text gameText("Minesweeper 3D", font, 60);
 	gameText.setFillColor(sf::Color::White);
 	gameText.setOutlineColor(sf::Color::Black);
 	gameText.setOutlineThickness(2);

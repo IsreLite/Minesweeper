@@ -1,3 +1,10 @@
+/*
+ * Copyright 2024 Israel Owolabi
+ *
+ * Licensed under the MIT License.
+ * See LICENSE file in the project root for full license information.
+ */
+
 #pragma once
 #include "Minesweeper3D.h"
 #include "MinesweeperBoard.h"
@@ -8,8 +15,6 @@
 #include <SFML/System.hpp>
 #include<time.h>
 #include <vector>
-
-
 
 
 class Minesweeper3D
@@ -103,8 +108,8 @@ private:
 
 	sf::Vector2i getMousePos() const;
 	sf::Vector2f getMousePosFloat() const;
-	void initializeButton(sf::Text& text, sf::RectangleShape& button, const sf::String& label,
-		const sf::Color& fillColor, const sf::Vector2f& buttonPosition, const sf::Vector2f& textOffset);
+	const void initializeButton(sf::Text& text, sf::RectangleShape& button, const sf::String& label,
+		const sf::Color& fillColor, const sf::Vector2f& buttonPosition, const sf::Vector2f& textOffset) const;
 	void initialize(int boardSize, GameMode gameMode) {
 		// Initialize the game with the provided parameters
 		this->BOARD_SIZE = boardSize;
