@@ -46,9 +46,9 @@ build-job:       # This job runs in the build stage, which runs first.
     paths:
       - mybinary
       # depending on your build setup it's most likely a good idea to cache outputs to reduce the build time
-      cache:
-        paths:
-          - "*.o"
+    cache:
+      paths:
+        - "*.o"
     # - g++ -g $(find ../ -type f -iregex ".*\.cpp") -o Minesweeper
 
   tags:
