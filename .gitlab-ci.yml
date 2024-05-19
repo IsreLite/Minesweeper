@@ -192,3 +192,7 @@ include:
   dependencies: [build]
 dast_environment_deploy:
   dependencies: [build]
+
+tags:
+- docker
+- shell
