@@ -39,7 +39,7 @@ build-job:       # This job runs in the build stage, which runs first.
     - cp ../*.h .  # Copy all .h files to the build directory
     - cp ../*.cpp .  # Copy all .cpp files to the build directory
     - cp -r ../src .  # Copy the src directory to the build directory
-
+    - ls
     - g++ Minesweeper.cpp -o mybinary
 
   artifacts:
