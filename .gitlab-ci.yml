@@ -8,7 +8,7 @@ jobs:
     runs-on: ${{ matrix.platform.os }}
 
     tags:
-    - docker
+    # - docker
     - shell
 
     strategy:
