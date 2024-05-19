@@ -20,11 +20,14 @@ stages:          # List of stages for jobs, and their order of execution
    #- test
    #- deploy
 
+
 tags:
 - docker
 
 build-job:       # This job runs in the build stage, which runs first.
   stage: build
+
+
   script:
   - echo "Installing dependencies..."
   # - apt install -y \
@@ -66,5 +69,3 @@ build-job:       # This job runs in the build stage, which runs first.
 
     # - g++ -g $(find ../ -type f -iregex ".*\.cpp") -o Minesweeper
 
-  tags:
-  - docker
