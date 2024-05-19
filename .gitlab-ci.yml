@@ -24,6 +24,7 @@ stages:          # List of stages for jobs, and their order of execution
   - bash
   - echo "Configure CMake"
   - cmake -S $GITHUB_WORKSPACE -B $GITHUB_WORKSPACE/build -DCMAKE_INSTALL_PREFIX=$GITHUB_WORKSPACE/install -DSFML_BUILD_EXAMPLES=TRUE -DCMAKE_VERBOSE_MAKEFILE=ON -DSFML_BUILD_TEST_SUITE=TRUE -DWARNINGS_AS_ERRORS=TRUE ${{matrix.platform.flags}} ${{matrix.config.flags}}
+  - cmake --build $GITHUB_WORKSPACE/build --config Release --target install
 
 
 
