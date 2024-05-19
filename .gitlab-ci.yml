@@ -1,44 +1,35 @@
-name: CI
+# This file is a template, and might need editing before it works on your project.
+# To contribute improvements to CI/CD templates, please follow the Development guide at:
+# https://docs.gitlab.com/ee/development/cicd/templates.html
+# This specific template is located at:
+# https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/C++.gitlab-ci.yml
 
+# use the official gcc image, based on debian
+# can use verions as well, like gcc:5.2
+# see https://hub.docker.com/_/gcc/
 
-jobs:
-  build:
-    name: ${{ matrix.platform.name }} ${{ matrix.config.name }}
-    runs-on: ${{ matrix.platform.os }}
+image: gcc
 
-    tags:
-    # - docker
-    - shell
+build:
+  stage: build
+  # instead of calling g++ directly you can also use some build toolkit like make
+  # install the necessary build tools when needed
+  # before_script:
+  run: sudo apt-get update && sudo apt-get install libxrandr-dev libxcursor-dev libudev-dev libopenal-dev libflac-dev   
+     libvorbis-dev libgl1-mesa-dev libegl1-mesa-dev libdrm-dev libgbm-dev
 
-    strategy:
-      fail-fast: false
-      matrix:
-        platform:
-        - { name: Linux GCC,      os: ubuntu-20.04  }
-        - { name: Linux Clang,    os: ubuntu-20.04, flags: -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ }
-        - { name: Linux GCC OpenGL ES, os: ubuntu-20.04, flags: -DSFML_OPENGL_ES=ON }
-        - { name: MacOS XCode,    os: macos-11   }
-        config:
-        - { name: Shared,       flags: -DBUILD_SHARED_LIBS=TRUE }
-        - { name: Static,       flags: -DBUILD_SHARED_LIBS=FALSE }
+  script:
+    - g++ helloworld.cpp -o mybinary
+  artifacts:
+    paths:
+      - mybinary
+      # depending on your build setup it's most likely a good idea to cache outputs to reduce the build time
+      # cache:
+      #   paths:
+      #     - "*.o"
 
-        include:
-        - platform: { name: Linux GCC, os: ubuntu-20.04  }
-          config: { name: Static DRM, flags: -DBUILD_SHARED_LIBS=FALSE -DSFML_USE_DRM=TRUE }
-        - platform: { name: Linux GCC, os: ubuntu-20.04  }
-          config: { name: Shared DRM, flags: -DBUILD_SHARED_LIBS=TRUE -DSFML_USE_DRM=TRUE }
-    steps:
-    - name: Checkout Code
-      uses: actions/checkout@v3
-
-    - name: Install Linux Dependencies
-      run: sudo apt-get update && sudo apt-get install libxrandr-dev libxcursor-dev libudev-dev libopenal-dev libflac-dev libvorbis-dev libgl1-mesa-dev libegl1-mesa-dev libdrm-dev libgbm-dev
-
-  
-    - name: Configure CMake
-      shell: bash
-      run: cmake -S $GITHUB_WORKSPACE -B $GITHUB_WORKSPACE/build -DCMAKE_INSTALL_PREFIX=$GITHUB_WORKSPACE/install -DSFML_BUILD_EXAMPLES=TRUE -DCMAKE_VERBOSE_MAKEFILE=ON -DSFML_BUILD_TEST_SUITE=TRUE -DWARNINGS_AS_ERRORS=TRUE ${{matrix.platform.flags}} ${{matrix.config.flags}}
-
-    - name: Build
-      shell: bash
-      run: cmake --build $GITHUB_WORKSPACE/build --config Release --target install
+# run tests using the binary built before
+test:
+  stage: test
+  script:
+    - ./runmytests.sh
