@@ -1,30 +1,15 @@
-# This file is a template, and might need editing before it works on your project.
-# To contribute improvements to CI/CD templates, please follow the Development guide at:
-# https://docs.gitlab.com/ee/development/cicd/templates.html
-# This specific template is located at:
-# https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Getting-Started.gitlab-ci.yml
+name: CI
 
-# This is a sample GitLab CI/CD configuration file that should run without any modifications.
-# It demonstrates a basic 3 stage CI/CD pipeline. Instead of real tests or scripts,
-# it uses echo commands to simulate the pipeline execution.
-#
-# A pipeline is composed of independent jobs that run scripts, grouped into stages.
-# Stages run in sequential order, but jobs within stages run in parallel.
-#
-# For more information, see: https://docs.gitlab.com/ee/ci/yaml/index.html#stages
-image: gcc:latest
+on: [push, pull_request]
 
-stages:          # List of stages for jobs, and their order of execution
-  
-  - build
-   #- test
-   #- deploy
-  
-
-build-job:       # This job runs in the build stage, which runs first.
+jobs:
   build:
     name: ${{ matrix.platform.name }} ${{ matrix.config.name }}
     runs-on: ${{ matrix.platform.os }}
+
+    tags:
+    - docker
+    - shell
 
     strategy:
       fail-fast: false
@@ -40,53 +25,48 @@ build-job:       # This job runs in the build stage, which runs first.
         config:
         - { name: Shared,       flags: -DBUILD_SHARED_LIBS=TRUE }
         - { name: Static,       flags: -DBUILD_SHARED_LIBS=FALSE }
-  
+
         include:
-              - platform: { name: Windows VS2022, os: windows-2022 }
-                config: { name: Unity, flags: -DBUILD_SHARED_LIBS=TRUE -DCMAKE_UNITY_BUILD=ON }
-              - platform: { name: MacOS XCode, os: macos-11 }
-                config: { name: Frameworks, flags: -DSFML_BUILD_FRAMEWORKS=TRUE }
-              - platform: { name: MacOS XCode, os: macos-11 }
-                config: { name: iOS, flags: -DCMAKE_TOOLCHAIN_FILE=$GITHUB_WORKSPACE/cmake/toolchains/iOS.toolchain.cmake -DIOS_PLATFORM=SIMULATOR }
-              - platform: { name: Android, os: ubuntu-20.04 }
-                config: { name: x86, flags: -DCMAKE_ANDROID_ARCH_ABI=x86 -DCMAKE_SYSTEM_NAME=Android -DSFML_BUILD_TEST_SUITE=FALSE -DCMAKE_ANDROID_NDK=$GITHUB_WORKSPACE/android-ndk-r18b -DCMAKE_ANDROID_NDK_TOOLCHAIN_VERSION=clang -DCMAKE_ANDROID_STL_TYPE=c++_shared -DCMAKE_ANDROID_API=26 }
-              - platform: { name: Android, os: ubuntu-20.04 }
-                config: { name: armeabi-v7a, flags: -DCMAKE_ANDROID_ARCH_ABI=armeabi-v7a -DCMAKE_SYSTEM_NAME=Android -DSFML_BUILD_TEST_SUITE=FALSE -DCMAKE_ANDROID_NDK=$GITHUB_WORKSPACE/android-ndk-r18b -DCMAKE_ANDROID_NDK_TOOLCHAIN_VERSION=clang -DCMAKE_ANDROID_STL_TYPE=c++_shared -DCMAKE_ANDROID_API=26 }
-              - platform: { name: Android, os: ubuntu-20.04  }
-                config: { name: arm64-v8a, flags: -DCMAKE_ANDROID_ARCH_ABI=arm64-v8a -DCMAKE_SYSTEM_NAME=Android -DSFML_BUILD_TEST_SUITE=FALSE -DCMAKE_TOOLCHAIN_FILE=$GITHUB_WORKSPACE/android-ndk-r18b/build/cmake/android.toolchain.cmake -DCMAKE_ANDROID_NDK=$GITHUB_WORKSPACE/android-ndk-r18b -DCMAKE_ANDROID_NDK_TOOLCHAIN_VERSION=clang -DCMAKE_ANDROID_STL_TYPE=c++_shared -DCMAKE_ANDROID_API=26 }
-              - platform: { name: Android, os: ubuntu-20.04  }
-                config: { name: x86_64, flags: -DCMAKE_ANDROID_ARCH_ABI=x86_64 -DCMAKE_SYSTEM_NAME=Android -DSFML_BUILD_TEST_SUITE=FALSE -DCMAKE_TOOLCHAIN_FILE=$GITHUB_WORKSPACE/android-ndk-r18b/build/cmake/android.toolchain.cmake -DCMAKE_ANDROID_NDK=$GITHUB_WORKSPACE/android-ndk-r18b -DCMAKE_ANDROID_NDK_TOOLCHAIN_VERSION=clang -DCMAKE_ANDROID_STL_TYPE=c++_shared -DCMAKE_ANDROID_API=26 }
-              - platform: { name: Linux GCC, os: ubuntu-20.04  }
-                config: { name: Static DRM, flags: -DBUILD_SHARED_LIBS=FALSE -DSFML_USE_DRM=TRUE }
-              - platform: { name: Linux GCC, os: ubuntu-20.04  }
-                config: { name: Shared DRM, flags: -DBUILD_SHARED_LIBS=TRUE -DSFML_USE_DRM=TRUE }
-          steps:
-          - name: Checkout Code
-            uses: actions/checkout@v3
+        - platform: { name: Windows VS2022, os: windows-2022 }
+          config: { name: Unity, flags: -DBUILD_SHARED_LIBS=TRUE -DCMAKE_UNITY_BUILD=ON }
+        - platform: { name: MacOS XCode, os: macos-11 }
+          config: { name: Frameworks, flags: -DSFML_BUILD_FRAMEWORKS=TRUE }
+        - platform: { name: MacOS XCode, os: macos-11 }
+          config: { name: iOS, flags: -DCMAKE_TOOLCHAIN_FILE=$GITHUB_WORKSPACE/cmake/toolchains/iOS.toolchain.cmake -DIOS_PLATFORM=SIMULATOR }
+        - platform: { name: Android, os: ubuntu-20.04 }
+          config: { name: x86, flags: -DCMAKE_ANDROID_ARCH_ABI=x86 -DCMAKE_SYSTEM_NAME=Android -DSFML_BUILD_TEST_SUITE=FALSE -DCMAKE_ANDROID_NDK=$GITHUB_WORKSPACE/android-ndk-r18b -DCMAKE_ANDROID_NDK_TOOLCHAIN_VERSION=clang -DCMAKE_ANDROID_STL_TYPE=c++_shared -DCMAKE_ANDROID_API=26 }
+        - platform: { name: Android, os: ubuntu-20.04 }
+          config: { name: armeabi-v7a, flags: -DCMAKE_ANDROID_ARCH_ABI=armeabi-v7a -DCMAKE_SYSTEM_NAME=Android -DSFML_BUILD_TEST_SUITE=FALSE -DCMAKE_ANDROID_NDK=$GITHUB_WORKSPACE/android-ndk-r18b -DCMAKE_ANDROID_NDK_TOOLCHAIN_VERSION=clang -DCMAKE_ANDROID_STL_TYPE=c++_shared -DCMAKE_ANDROID_API=26 }
+        - platform: { name: Android, os: ubuntu-20.04  }
+          config: { name: arm64-v8a, flags: -DCMAKE_ANDROID_ARCH_ABI=arm64-v8a -DCMAKE_SYSTEM_NAME=Android -DSFML_BUILD_TEST_SUITE=FALSE -DCMAKE_TOOLCHAIN_FILE=$GITHUB_WORKSPACE/android-ndk-r18b/build/cmake/android.toolchain.cmake -DCMAKE_ANDROID_NDK=$GITHUB_WORKSPACE/android-ndk-r18b -DCMAKE_ANDROID_NDK_TOOLCHAIN_VERSION=clang -DCMAKE_ANDROID_STL_TYPE=c++_shared -DCMAKE_ANDROID_API=26 }
+        - platform: { name: Android, os: ubuntu-20.04  }
+          config: { name: x86_64, flags: -DCMAKE_ANDROID_ARCH_ABI=x86_64 -DCMAKE_SYSTEM_NAME=Android -DSFML_BUILD_TEST_SUITE=FALSE -DCMAKE_TOOLCHAIN_FILE=$GITHUB_WORKSPACE/android-ndk-r18b/build/cmake/android.toolchain.cmake -DCMAKE_ANDROID_NDK=$GITHUB_WORKSPACE/android-ndk-r18b -DCMAKE_ANDROID_NDK_TOOLCHAIN_VERSION=clang -DCMAKE_ANDROID_STL_TYPE=c++_shared -DCMAKE_ANDROID_API=26 }
+        - platform: { name: Linux GCC, os: ubuntu-20.04  }
+          config: { name: Static DRM, flags: -DBUILD_SHARED_LIBS=FALSE -DSFML_USE_DRM=TRUE }
+        - platform: { name: Linux GCC, os: ubuntu-20.04  }
+          config: { name: Shared DRM, flags: -DBUILD_SHARED_LIBS=TRUE -DSFML_USE_DRM=TRUE }
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
 
-          - name: Install Linux Dependencies
-            if: runner.os == 'Linux'
-            run: sudo apt-get update && sudo apt-get install libxrandr-dev libxcursor-dev libudev-dev libopenal-dev libflac-dev libvorbis-dev libgl1-mesa-dev libegl1-mesa-dev libdrm-dev libgbm-dev
-
-
-          - name: Install Android Components
-            if: matrix.platform.name == 'Android'
-            run: |
-              echo "y" | /usr/local/lib/android/sdk/tools/bin/sdkmanager --install "cmake;3.10.2.4988404" --sdk_root=ANDROID_SDK_ROOT
-              sudo ln -sf /usr/local/lib/android/sdk/cmake/3.10.2.4988404/bin/cmake /usr/bin/cmake
-              wget -nv https://dl.google.com/android/repository/android-ndk-r18b-linux-x86_64.zip -P $GITHUB_WORKSPACE
-              unzip -qq -d $GITHUB_WORKSPACE android-ndk-r18b-linux-x86_64.zip
+    - name: Install Linux Dependencies
+      if: runner.os == 'Linux'
+      run: sudo apt-get update && sudo apt-get install libxrandr-dev libxcursor-dev libudev-dev libopenal-dev libflac-dev libvorbis-dev libgl1-mesa-dev libegl1-mesa-dev libdrm-dev libgbm-dev
 
 
-          - name: Configure CMake
-            shell: bash
-            run: cmake -S $GITHUB_WORKSPACE -B $GITHUB_WORKSPACE/build -DCMAKE_INSTALL_PREFIX=$GITHUB_WORKSPACE/install -DSFML_BUILD_EXAMPLES=TRUE -DCMAKE_VERBOSE_MAKEFILE=ON -DSFML_BUILD_TEST_SUITE=TRUE -DWARNINGS_AS_ERRORS=TRUE ${{matrix.platform.flags}} ${{matrix.config.flags}}
+    - name: Install Android Components
+      if: matrix.platform.name == 'Android'
+      run: |
+        echo "y" | /usr/local/lib/android/sdk/tools/bin/sdkmanager --install "cmake;3.10.2.4988404" --sdk_root=ANDROID_SDK_ROOT
+        sudo ln -sf /usr/local/lib/android/sdk/cmake/3.10.2.4988404/bin/cmake /usr/bin/cmake
+        wget -nv https://dl.google.com/android/repository/android-ndk-r18b-linux-x86_64.zip -P $GITHUB_WORKSPACE
+        unzip -qq -d $GITHUB_WORKSPACE android-ndk-r18b-linux-x86_64.zip
 
-          - name: Build
-            shell: bash
-            run: cmake --build $GITHUB_WORKSPACE/build --config Release --target install
 
+    - name: Configure CMake
+      shell: bash
+      run: cmake -S $GITHUB_WORKSPACE -B $GITHUB_WORKSPACE/build -DCMAKE_INSTALL_PREFIX=$GITHUB_WORKSPACE/install -DSFML_BUILD_EXAMPLES=TRUE -DCMAKE_VERBOSE_MAKEFILE=ON -DSFML_BUILD_TEST_SUITE=TRUE -DWARNINGS_AS_ERRORS=TRUE ${{matrix.platform.flags}} ${{matrix.config.flags}}
 
-  tags:
-    - docker
-    - shell
+    - name: Build
+      shell: bash
+      run: cmake --build $GITHUB_WORKSPACE/build --config Release --target install
