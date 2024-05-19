@@ -19,7 +19,7 @@ stages:          # List of stages for jobs, and their order of execution
    #- test
    #- deploy
   - name: Install Linux Dependencies
-    run: sudo apt-get update && sudo apt-get install libxrandr-dev libxcursor-dev libudev-dev libopenal-dev libflac-dev libvorbis-dev libgl1-mesa-dev libegl1-mesa-dev libdrm-dev libgbm-dev
+    run: apt-get update && sudo apt-get install libxrandr-dev libxcursor-dev libudev-dev libopenal-dev libflac-dev libvorbis-dev libgl1-mesa-dev libegl1-mesa-dev libdrm-dev libgbm-dev
 
 
 build-job:       # This job runs in the build stage, which runs first.
