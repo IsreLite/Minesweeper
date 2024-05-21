@@ -104,12 +104,34 @@ std::pair<float, float> Minesweeper3D::getGridStartPosition()
 	// Check if the window size has changed
 	if (wSize != currentWindowSize)
 	{
+		const int MIN_BOARD_SIZE = 3;
+		const int MAX_BOARD_SIZE = 20;
+
+
 		// Window size has changed, recalculate the grid parameters
 		currentWindowSize = wSize;
 
-		// Adjust BOARD_SIZE based on window size (example: increase by 1 cell for every 100 pixels over 800)
-		CELL_SIZE = std::min(windowWidth, windowHeight) / 6;
+		// Calculate the maximum number of cells that can fit in the window
+		int maxCellsHorizontal = static_cast<float>(windowSize.x / CELL_SIZE);
+		int maxCellsVertical = static_cast<float>(windowSize.y / CELL_SIZE);
 
+
+		// Adjust BOARD_SIZE based on window size (example: increase by 1 cell for every 100 pixels over 800)
+		//CELL_SIZE = std::min(windowWidth, windowHeight) / 8;
+		CELL_SIZE = std::max(MIN_BOARD_SIZE, std::min(MAX_BOARD_SIZE, std::min(maxCellsHorizontal, maxCellsVertical)));
+
+
+		// Recalculate the CELL_SIZE based on the new BOARD_SIZE and window size
+		if (BOARD_SIZE <= 8)
+		{
+			// For BOARD_SIZE <= 8, use a constant cell size
+			CELL_SIZE = 70.0f;
+		}
+		else
+		{
+			// For BOARD_SIZE > 8, adjust the cell size based on the window size
+			CELL_SIZE = std::min(windowSize.x, windowSize.y) / BOARD_SIZE;
+		}
 
 		// Calculate the starting position of the grid
 		float gridWidth = BOARD_SIZE * CELL_SIZE;
@@ -427,10 +449,12 @@ void Minesweeper3D::drawBoard()
 					mineCountText.setFont(font);
 					mineCountText.setCharacterSize(30);
 					mineCountText.setFillColor(textColor);
-					// Add offset to text postion
-					mineCountText.setPosition((xPos + x + 8) + this->CELL_SIZE / 4, (yPos - y + 2) + CELL_SIZE / 4);
-					// Position the text needs more dynamic adjustments
+					// Center the text within the cell
+					float yOffset = -0.09f * this->CELL_SIZE; // 5% upward shift
+					mineCountText.setPosition(xPos + (this->CELL_SIZE / 2) - (mineCountText.getGlobalBounds().width / 2),
+						yPos + (this->CELL_SIZE / 2) - (mineCountText.getGlobalBounds().height / 2) + yOffset);
 				}
+
 
 				// Draw the cell shape
 				textureToUse = &revealedTexture;
