@@ -120,14 +120,14 @@ int main()
 	//ctrl.play();
 
 
-	//MinesweeperBoard board(20, 10, GameMode::NORMAL);
-	//MSBoardTextView view(board);
-	////view.display();
-	////board.revealField(0, 5);
-	////view.display();
+	MinesweeperBoard board(20, 10, GameMode::NORMAL);
+	MSBoardTextView view(board);
+	//view.display();
+	//board.revealField(0, 5);
+	//view.display();
 
-	//MSTextController ctrl(board, view);
-	//ctrl.play();
+	MSTextController ctrl(board, view);
+	ctrl.play();
 
 
 	//Minesweeper3D game;
@@ -168,32 +168,32 @@ int main()
 	//WindowManager windowManager(window);
 	/*WindowManager& windowManager = WindowManager::getInstance();*/
 
-
-// Create the WindowManager instance
-	WindowManager windowManager(800, 600, "Minesweeper 3D");
-
-	// Get the shared window
-	std::shared_ptr<sf::RenderWindow> window = windowManager.getWindow();
-
-	// Create the SplashScreen instance
-	SplashScreen splashScreen(window);
-
-	// Run the splash screen
-	splashScreen.run();
-
-	//Main game loop
-	while (window->isOpen()) {
-		sf::Event event;
-		while (window->pollEvent(event)) {
-			if (event.type == sf::Event::Closed) {
-				window->close();
-			}
-		}
-
-		window->clear();
-		// Render game elements here
-		window->display();
-	}
+//
+//// Create the WindowManager instance
+//	WindowManager windowManager(800, 600, "Minesweeper 3D");
+//
+//	// Get the shared window
+//	std::shared_ptr<sf::RenderWindow> window = windowManager.getWindow();
+//
+//	// Create the SplashScreen instance
+//	SplashScreen splashScreen(window);
+//
+//	// Run the splash screen
+//	splashScreen.run();
+//
+//	//Main game loop
+//	while (window->isOpen()) {
+//		sf::Event event;
+//		while (window->pollEvent(event)) {
+//			if (event.type == sf::Event::Closed) {
+//				window->close();
+//			}
+//		}
+//
+//		window->clear();
+//		// Render game elements here
+//		window->display();
+//	}
 
 
 
